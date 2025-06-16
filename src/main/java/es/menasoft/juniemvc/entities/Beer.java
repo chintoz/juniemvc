@@ -7,6 +7,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,4 +37,8 @@ public class Beer {
 
     @UpdateTimestamp
     private LocalDateTime updateDate;
+
+    @OneToMany(mappedBy = "beer", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<OrderLine> orderLines = new HashSet<>();
 }
