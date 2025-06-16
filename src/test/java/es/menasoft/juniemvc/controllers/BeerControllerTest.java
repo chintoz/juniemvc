@@ -1,7 +1,7 @@
 package es.menasoft.juniemvc.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.menasoft.juniemvc.entities.Beer;
+import es.menasoft.juniemvc.models.BeerDto;
 import es.menasoft.juniemvc.services.BeerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,11 +14,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -51,28 +55,34 @@ public class BeerControllerTest {
     @Autowired
     private BeerService beerService;
 
-    private Beer testBeer;
-    private List<Beer> testBeerList;
+    private BeerDto testBeer;
+    private List<BeerDto> testBeerList;
 
     @BeforeEach
     void setUp() {
-        testBeer = Beer.builder()
-                .id(1)
-                .beerName("Test Beer")
-                .beerStyle("IPA")
-                .upc("123456789")
-                .price(new BigDecimal("12.99"))
-                .quantityOnHand(100)
-                .build();
+        testBeer = new BeerDto(
+                1,
+                null,
+                "Test Beer",
+                "IPA",
+                "123456789",
+                100,
+                new BigDecimal("12.99"),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
-        Beer testBeer2 = Beer.builder()
-                .id(2)
-                .beerName("Another Beer")
-                .beerStyle("Lager")
-                .upc("987654321")
-                .price(new BigDecimal("9.99"))
-                .quantityOnHand(200)
-                .build();
+        BeerDto testBeer2 = new BeerDto(
+                2,
+                null,
+                "Another Beer",
+                "Lager",
+                "987654321",
+                200,
+                new BigDecimal("9.99"),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
         testBeerList = Arrays.asList(testBeer, testBeer2);
     }
@@ -80,33 +90,57 @@ public class BeerControllerTest {
     @Test
     void testCreateBeer() throws Exception {
         // Given
-        Beer beerToSave = Beer.builder()
-                .beerName("New Beer")
-                .beerStyle("Stout")
-                .upc("111222333")
-                .price(new BigDecimal("14.99"))
-                .quantityOnHand(50)
-                .build();
+        BeerDto beerToSave = new BeerDto(
+                null,
+                null,
+                "New Beer",
+                "Stout",
+                "111222333",
+                50,
+                new BigDecimal("14.99"),
+                null,
+                null
+        );
 
-        given(beerService.saveBeer(any(Beer.class))).willReturn(
-                Beer.builder()
-                        .id(3)
-                        .beerName("New Beer")
-                        .beerStyle("Stout")
-                        .upc("111222333")
-                        .price(new BigDecimal("14.99"))
-                        .quantityOnHand(50)
-                        .build()
+        given(beerService.saveBeer(any(BeerDto.class))).willReturn(
+                new BeerDto(
+                        3,
+                        null,
+                        "New Beer",
+                        "Stout",
+                        "111222333",
+                        50,
+                        new BigDecimal("14.99"),
+                        LocalDateTime.now(),
+                        LocalDateTime.now()
+                )
+        );
+    }
+
+    @Test
+    void testCreateBeerValidationFail() throws Exception {
+        // Given
+        BeerDto invalidBeer = new BeerDto(
+                null,
+                null,
+                "", // Invalid: empty name
+                "Stout",
+                "111222333",
+                -5, // Invalid: negative quantity
+                new BigDecimal("-1.99"), // Invalid: negative price
+                null,
+                null
         );
 
         // When/Then
         mockMvc.perform(post("/api/v1/beers")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(beerToSave)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is(3)))
-                .andExpect(jsonPath("$.beerName", is("New Beer")))
-                .andExpect(jsonPath("$.beerStyle", is("Stout")));
+                .content(objectMapper.writeValueAsString(invalidBeer)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> {
+                    Exception exception = result.getResolvedException();
+                    assert exception instanceof MethodArgumentNotValidException;
+                });
     }
 
     @Test
@@ -150,24 +184,31 @@ public class BeerControllerTest {
     @Test
     void testUpdateBeer() throws Exception {
         // Given
-        Beer beerToUpdate = Beer.builder()
-                .beerName("Updated Beer")
-                .beerStyle("Porter")
-                .upc("999888777")
-                .price(new BigDecimal("16.99"))
-                .quantityOnHand(75)
-                .build();
+        BeerDto beerToUpdate = new BeerDto(
+                null,
+                null,
+                "Updated Beer",
+                "Porter",
+                "999888777",
+                75,
+                new BigDecimal("16.99"),
+                null,
+                null
+        );
 
-        Beer updatedBeer = Beer.builder()
-                .id(1)
-                .beerName("Updated Beer")
-                .beerStyle("Porter")
-                .upc("999888777")
-                .price(new BigDecimal("16.99"))
-                .quantityOnHand(75)
-                .build();
+        BeerDto updatedBeer = new BeerDto(
+                1,
+                null,
+                "Updated Beer",
+                "Porter",
+                "999888777",
+                75,
+                new BigDecimal("16.99"),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
-        given(beerService.updateBeer(eq(1), any(Beer.class))).willReturn(Optional.of(updatedBeer));
+        given(beerService.updateBeer(eq(1), any(BeerDto.class))).willReturn(Optional.of(updatedBeer));
 
         // When/Then
         mockMvc.perform(put("/api/v1/beers/1")
@@ -182,15 +223,19 @@ public class BeerControllerTest {
     @Test
     void testUpdateBeerNotFound() throws Exception {
         // Given
-        Beer beerToUpdate = Beer.builder()
-                .beerName("Updated Beer")
-                .beerStyle("Porter")
-                .upc("999888777")
-                .price(new BigDecimal("16.99"))
-                .quantityOnHand(75)
-                .build();
+        BeerDto beerToUpdate = new BeerDto(
+                null,
+                null,
+                "Updated Beer",
+                "Porter",
+                "999888777",
+                75,
+                new BigDecimal("16.99"),
+                null,
+                null
+        );
 
-        given(beerService.updateBeer(eq(999), any(Beer.class))).willReturn(Optional.empty());
+        given(beerService.updateBeer(eq(999), any(BeerDto.class))).willReturn(Optional.empty());
 
         // When/Then
         mockMvc.perform(put("/api/v1/beers/999")

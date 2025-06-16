@@ -1,6 +1,8 @@
 package es.menasoft.juniemvc.services;
 
 import es.menasoft.juniemvc.entities.Beer;
+import es.menasoft.juniemvc.mappers.BeerMapper;
+import es.menasoft.juniemvc.models.BeerDto;
 import es.menasoft.juniemvc.repositories.BeerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +18,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -27,14 +27,20 @@ class BeerServiceImplTest {
     @Mock
     private BeerRepository beerRepository;
 
+    @Mock
+    private BeerMapper beerMapper;
+
     @InjectMocks
     private BeerServiceImpl beerService;
 
     private Beer testBeer;
+    private BeerDto testBeerDto;
     private List<Beer> testBeerList;
+    private List<BeerDto> testBeerDtoList;
 
     @BeforeEach
     void setUp() {
+        // Setup test Beer entity
         testBeer = Beer.builder()
                 .id(1)
                 .beerName("Test Beer")
@@ -54,11 +60,50 @@ class BeerServiceImplTest {
                 .build();
 
         testBeerList = Arrays.asList(testBeer, testBeer2);
+
+        // Setup test BeerDto
+        testBeerDto = new BeerDto(
+                1,
+                null,
+                "Test Beer",
+                "IPA",
+                "123456789",
+                100,
+                new BigDecimal("12.99"),
+                null,
+                null
+        );
+
+        BeerDto testBeerDto2 = new BeerDto(
+                2,
+                null,
+                "Another Beer",
+                "Lager",
+                "987654321",
+                200,
+                new BigDecimal("9.99"),
+                null,
+                null
+        );
+
+        testBeerDtoList = Arrays.asList(testBeerDto, testBeerDto2);
     }
 
     @Test
     void saveBeer() {
         // Given
+        BeerDto beerDtoToSave = new BeerDto(
+                null,
+                null,
+                "New Beer",
+                "Stout",
+                "111222333",
+                50,
+                new BigDecimal("14.99"),
+                null,
+                null
+        );
+
         Beer beerToSave = Beer.builder()
                 .beerName("New Beer")
                 .beerStyle("Stout")
@@ -76,31 +121,49 @@ class BeerServiceImplTest {
                 .quantityOnHand(50)
                 .build();
 
+        BeerDto savedBeerDto = new BeerDto(
+                3,
+                null,
+                "New Beer",
+                "Stout",
+                "111222333",
+                50,
+                new BigDecimal("14.99"),
+                null,
+                null
+        );
+
+        when(beerMapper.beerDtoToBeer(beerDtoToSave)).thenReturn(beerToSave);
         when(beerRepository.save(any(Beer.class))).thenReturn(savedBeer);
+        when(beerMapper.beerToBeerDto(savedBeer)).thenReturn(savedBeerDto);
 
         // When
-        Beer result = beerService.saveBeer(beerToSave);
+        BeerDto result = beerService.saveBeer(beerDtoToSave);
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(3);
-        assertThat(result.getBeerName()).isEqualTo("New Beer");
-        verify(beerRepository).save(beerToSave);
+        assertThat(result.id()).isEqualTo(3);
+        assertThat(result.beerName()).isEqualTo("New Beer");
+        verify(beerMapper).beerDtoToBeer(beerDtoToSave);
+        verify(beerRepository).save(any(Beer.class));
+        verify(beerMapper).beerToBeerDto(savedBeer);
     }
 
     @Test
     void getBeerById() {
         // Given
         when(beerRepository.findById(1)).thenReturn(Optional.of(testBeer));
+        when(beerMapper.beerToBeerDto(testBeer)).thenReturn(testBeerDto);
 
         // When
-        Optional<Beer> result = beerService.getBeerById(1);
+        Optional<BeerDto> result = beerService.getBeerById(1);
 
         // Then
         assertThat(result).isPresent();
-        assertThat(result.get().getId()).isEqualTo(1);
-        assertThat(result.get().getBeerName()).isEqualTo("Test Beer");
+        assertThat(result.get().id()).isEqualTo(1);
+        assertThat(result.get().beerName()).isEqualTo("Test Beer");
         verify(beerRepository).findById(1);
+        verify(beerMapper).beerToBeerDto(testBeer);
     }
 
     @Test
@@ -109,7 +172,7 @@ class BeerServiceImplTest {
         when(beerRepository.findById(999)).thenReturn(Optional.empty());
 
         // When
-        Optional<Beer> result = beerService.getBeerById(999);
+        Optional<BeerDto> result = beerService.getBeerById(999);
 
         // Then
         assertThat(result).isEmpty();
@@ -120,22 +183,38 @@ class BeerServiceImplTest {
     void getAllBeers() {
         // Given
         when(beerRepository.findAll()).thenReturn(testBeerList);
+        when(beerMapper.beerToBeerDto(testBeer)).thenReturn(testBeerDto);
+        when(beerMapper.beerToBeerDto(testBeerList.get(1))).thenReturn(testBeerDtoList.get(1));
 
         // When
-        List<Beer> result = beerService.getAllBeers();
+        List<BeerDto> result = beerService.getAllBeers();
 
         // Then
         assertThat(result).hasSize(2);
-        assertThat(result.get(0).getId()).isEqualTo(1);
-        assertThat(result.get(0).getBeerName()).isEqualTo("Test Beer");
-        assertThat(result.get(1).getId()).isEqualTo(2);
-        assertThat(result.get(1).getBeerName()).isEqualTo("Another Beer");
+        assertThat(result.get(0).id()).isEqualTo(1);
+        assertThat(result.get(0).beerName()).isEqualTo("Test Beer");
+        assertThat(result.get(1).id()).isEqualTo(2);
+        assertThat(result.get(1).beerName()).isEqualTo("Another Beer");
         verify(beerRepository).findAll();
+        verify(beerMapper).beerToBeerDto(testBeer);
+        verify(beerMapper).beerToBeerDto(testBeerList.get(1));
     }
 
     @Test
     void updateBeer() {
         // Given
+        BeerDto beerDtoToUpdate = new BeerDto(
+                null,
+                null,
+                "Updated Beer",
+                "Porter",
+                "999888777",
+                75,
+                new BigDecimal("16.99"),
+                null,
+                null
+        );
+
         Beer beerToUpdate = Beer.builder()
                 .beerName("Updated Beer")
                 .beerStyle("Porter")
@@ -162,36 +241,56 @@ class BeerServiceImplTest {
                 .quantityOnHand(75)
                 .build();
 
+        BeerDto updatedBeerDto = new BeerDto(
+                1,
+                null,
+                "Updated Beer",
+                "Porter",
+                "999888777",
+                75,
+                new BigDecimal("16.99"),
+                null,
+                null
+        );
+
+        when(beerMapper.beerDtoToBeer(beerDtoToUpdate)).thenReturn(beerToUpdate);
         when(beerRepository.findById(1)).thenReturn(Optional.of(existingBeer));
         when(beerRepository.save(any(Beer.class))).thenReturn(updatedBeer);
+        when(beerMapper.beerToBeerDto(updatedBeer)).thenReturn(updatedBeerDto);
 
         // When
-        Optional<Beer> result = beerService.updateBeer(1, beerToUpdate);
+        Optional<BeerDto> result = beerService.updateBeer(1, beerDtoToUpdate);
 
         // Then
         assertThat(result).isPresent();
-        assertThat(result.get().getId()).isEqualTo(1);
-        assertThat(result.get().getBeerName()).isEqualTo("Updated Beer");
-        assertThat(result.get().getBeerStyle()).isEqualTo("Porter");
+        assertThat(result.get().id()).isEqualTo(1);
+        assertThat(result.get().beerName()).isEqualTo("Updated Beer");
+        assertThat(result.get().beerStyle()).isEqualTo("Porter");
+        verify(beerMapper).beerDtoToBeer(beerDtoToUpdate);
         verify(beerRepository).findById(1);
         verify(beerRepository).save(any(Beer.class));
+        verify(beerMapper).beerToBeerDto(updatedBeer);
     }
 
     @Test
     void updateBeerNotFound() {
         // Given
-        Beer beerToUpdate = Beer.builder()
-                .beerName("Updated Beer")
-                .beerStyle("Porter")
-                .upc("999888777")
-                .price(new BigDecimal("16.99"))
-                .quantityOnHand(75)
-                .build();
+        BeerDto beerDtoToUpdate = new BeerDto(
+                null,
+                null,
+                "Updated Beer",
+                "Porter",
+                "999888777",
+                75,
+                new BigDecimal("16.99"),
+                null,
+                null
+        );
 
         when(beerRepository.findById(999)).thenReturn(Optional.empty());
 
         // When
-        Optional<Beer> result = beerService.updateBeer(999, beerToUpdate);
+        Optional<BeerDto> result = beerService.updateBeer(999, beerDtoToUpdate);
 
         // Then
         assertThat(result).isEmpty();
