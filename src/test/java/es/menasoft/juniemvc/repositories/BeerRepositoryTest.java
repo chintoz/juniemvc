@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,7 +13,15 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Test class for BeerRepository.
+ * Uses DataJpaTest with custom properties to ensure tests run correctly.
+ */
 @DataJpaTest
+@TestPropertySource(properties = {
+    "spring.jpa.hibernate.ddl-auto=create-drop",
+    "spring.flyway.enabled=false"
+})
 class BeerRepositoryTest {
 
     @Autowired
@@ -92,10 +101,10 @@ class BeerRepositoryTest {
                 .build();
 
         Beer savedBeer = beerRepository.save(beer);
-        
+
         savedBeer.setBeerName("Updated Name");
         Beer updatedBeer = beerRepository.save(savedBeer);
-        
+
         assertThat(updatedBeer.getBeerName()).isEqualTo("Updated Name");
     }
 
@@ -111,11 +120,11 @@ class BeerRepositoryTest {
                 .build();
 
         Beer savedBeer = beerRepository.save(beer);
-        
+
         beerRepository.deleteById(savedBeer.getId());
-        
+
         Optional<Beer> deletedBeer = beerRepository.findById(savedBeer.getId());
-        
+
         assertThat(deletedBeer).isEmpty();
     }
 }
