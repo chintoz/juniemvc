@@ -81,3 +81,11 @@ logger.atDebug()
 	.addArgument(() -> computeExpensiveDetails())
     .log();
 ```
+
+## 15. Database Migrations with Flyway
+* Spring Boot automatically runs Flyway migrations on startup when Flyway is on the classpath.
+* Place migration scripts in the default location: `src/main/resources/db/migration`.
+* Follow the Flyway version naming convention: `V<version>__<description>.sql` (e.g., `V1__create_tables.sql`, `V2__add_indexes.sql`).
+* Version numbers should be sequential and can include dots and underscores (e.g., `V1_1__`, `V1.2__`).
+* Use repeatable migrations for scripts that can be run multiple times with prefix `R__` (e.g., `R__create_views.sql`).
+* Configure Flyway properties in `application.properties` or `application.yml` with the `spring.flyway` prefix.
