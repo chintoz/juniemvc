@@ -89,3 +89,30 @@ logger.atDebug()
 * Version numbers should be sequential and can include dots and underscores (e.g., `V1_1__`, `V1.2__`).
 * Use repeatable migrations for scripts that can be run multiple times with prefix `R__` (e.g., `R__create_views.sql`).
 * Configure Flyway properties in `application.properties` or `application.yml` with the `spring.flyway` prefix.
+
+## 16. OpenAPI Specification Guidelines
+* **API Documentation Structure:** The OpenAPI specification is organized in a modular way with the main file `openapi.yaml` referencing other files for paths, components, and schemas.
+  * The main file contains general API information, tags, servers, and references to path and component files.
+  * Path operations are defined in separate files in the `paths/` directory.
+  * Components (schemas, responses, headers, etc.) are defined in separate files in the `components/` directory.
+
+* **File Naming Conventions:**
+  * **Path Operation Files:** Named based on the API path they represent, with path parameters replaced by underscore notation.
+    * Example: `/users/{username}` is defined in `paths/users_{username}.yaml`
+    * Example: `/user` is defined in `paths/user.yaml`
+  * **Component Files:** Named after the component they define and placed in the appropriate subdirectory.
+    * Example: `User` schema is defined in `components/schemas/User.yaml`
+    * Example: `Problem` response is defined in `components/responses/Problem.yaml`
+
+* **Component Definitions:**
+  * **Schemas:** Define data models in separate files in the `components/schemas/` directory.
+    * Use `$ref` to reference other schemas (e.g., `$ref: './Email.yaml'`).
+  * **Responses:** Define reusable responses in separate files in the `components/responses/` directory.
+    * Use `$ref` to reference schemas (e.g., `$ref: '../schemas/Problem.yaml'`).
+  * **Headers, Parameters, etc.:** Follow the same pattern of defining in separate files and referencing with `$ref`.
+
+* **Testing the OpenAPI Specification:**
+  * Run `npm test` in the `openapi/` directory to validate the OpenAPI specification.
+  * This command runs `redocly lint` to check for errors and inconsistencies.
+  * To preview the documentation, run `npm start` which uses `redocly preview-docs`.
+  * To bundle the specification into a single file, run `npm run build` which creates `dist/bundle.yaml`.
