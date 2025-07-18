@@ -1,0 +1,113 @@
+get:
+  tags:
+    - Beer
+  summary: Get all beers
+  description: "Retrieves a list of all beers."
+  operationId: getAllBeers
+  security:
+    - api_key: []
+  responses:
+    '200':
+      description: "Successfully retrieved the list of beers"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../components/schemas/Beer.yaml'
+          example:
+            - id: 1
+              version: 1
+              beerName: "Pilsner Urquell"
+              beerStyle: "PILSNER"
+              upc: "0631234200036"
+              quantityOnHand: 100
+              price: 12.99
+              createdDate: "2025-07-19T00:34:00Z"
+              updateDate: "2025-07-19T00:34:00Z"
+            - id: 2
+              version: 1
+              beerName: "Guinness Draught"
+              beerStyle: "STOUT"
+              upc: "0631234300019"
+              quantityOnHand: 200
+              price: 14.99
+              createdDate: "2025-07-19T00:34:00Z"
+              updateDate: "2025-07-19T00:34:00Z"
+    '400':
+      description: "Bad request"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Bad request"
+
+post:
+  tags:
+    - Beer
+  summary: Create a new beer
+  description: "Creates a new beer with the provided data."
+  operationId: createBeer
+  security:
+    - api_key: []
+  requestBody:
+    description: "Beer data to create a new beer"
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/Beer.yaml'
+        example:
+          beerName: "Sierra Nevada Pale Ale"
+          beerStyle: "PALE_ALE"
+          upc: "0631234200043"
+          quantityOnHand: 150
+          price: 13.99
+  responses:
+    '201':
+      description: "Successfully created a new beer"
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/Beer.yaml'
+          example:
+            id: 3
+            version: 1
+            beerName: "Sierra Nevada Pale Ale"
+            beerStyle: "PALE_ALE"
+            upc: "0631234200043"
+            quantityOnHand: 150
+            price: 13.99
+            createdDate: "2025-07-19T00:34:00Z"
+            updateDate: "2025-07-19T00:34:00Z"
+    '400':
+      description: "Invalid beer data provided"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Validation failed"
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string
+                example:
+                  - field: "beerName"
+                    message: "Beer name is required"

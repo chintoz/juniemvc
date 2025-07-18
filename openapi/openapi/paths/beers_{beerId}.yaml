@@ -1,0 +1,150 @@
+parameters:
+  - name: beerId
+    in: path
+    description: "The ID of the beer"
+    required: true
+    schema:
+      type: integer
+      format: int32
+    example: 1
+
+get:
+  tags:
+    - Beer
+  summary: Get beer by ID
+  description: "Retrieves a beer by its ID."
+  operationId: getBeerById
+  security:
+    - api_key: []
+  responses:
+    '200':
+      description: "Successfully retrieved the beer"
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/Beer.yaml'
+          example:
+            id: 1
+            version: 1
+            beerName: "Pilsner Urquell"
+            beerStyle: "PILSNER"
+            upc: "0631234200036"
+            quantityOnHand: 100
+            price: 12.99
+            createdDate: "2025-07-19T00:34:00Z"
+            updateDate: "2025-07-19T00:34:00Z"
+    '404':
+      description: "Beer not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "Beer with ID 1 not found"
+
+put:
+  tags:
+    - Beer
+  summary: Update beer
+  description: "Updates a beer with the provided data."
+  operationId: updateBeer
+  security:
+    - api_key: []
+  requestBody:
+    description: "Updated beer data"
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/Beer.yaml'
+        example:
+          beerName: "Pilsner Urquell Premium"
+          beerStyle: "PILSNER"
+          upc: "0631234200036"
+          quantityOnHand: 120
+          price: 13.99
+  responses:
+    '200':
+      description: "Successfully updated the beer"
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/Beer.yaml'
+          example:
+            id: 1
+            version: 2
+            beerName: "Pilsner Urquell Premium"
+            beerStyle: "PILSNER"
+            upc: "0631234200036"
+            quantityOnHand: 120
+            price: 13.99
+            createdDate: "2025-07-19T00:34:00Z"
+            updateDate: "2025-07-19T00:35:00Z"
+    '400':
+      description: "Invalid beer data provided"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Validation failed"
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string
+                example:
+                  - field: "price"
+                    message: "Price must be positive"
+    '404':
+      description: "Beer not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "Beer with ID 1 not found"
+
+delete:
+  tags:
+    - Beer
+  summary: Delete beer
+  description: "Deletes a beer by its ID."
+  operationId: deleteBeer
+  security:
+    - api_key: []
+  responses:
+    '204':
+      description: "Successfully deleted the beer"
+    '404':
+      description: "Beer not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "Beer with ID 1 not found"

@@ -54,12 +54,15 @@ tags:
     description: "Example operations for retrieving information."
   - name: Tag
     description: "This is a tag description."
+  - name: Beer
+    description: "Operations for managing beers."
 x-tagGroups:
   - name: General
     tags:
       - User
       - Info
       - Echo
+      - Beer
   - name: Administration
     tags:
       - Admin
@@ -83,6 +86,10 @@ paths:
     $ref: paths/pathItemWithExamples.yaml
   '/echo':
     $ref: 'paths/echo.yaml'
+  '/api/v1/beers':
+    $ref: 'paths/beers.yaml'
+  '/api/v1/beers/{beerId}':
+    $ref: 'paths/beers_{beerId}.yaml'
 components:
   securitySchemes:
     main_auth:
