@@ -1,0 +1,75 @@
+parameters:
+  - name: orderId
+    in: path
+    description: "The ID of the beer order"
+    required: true
+    schema:
+      type: integer
+      format: int32
+    example: 1
+
+patch:
+  tags:
+    - Beer Order
+  summary: Update beer order status
+  description: "Updates the status of a beer order."
+  operationId: updateBeerOrderStatus
+  security:
+    - api_key: []
+  requestBody:
+    description: "New status for the beer order"
+    required: true
+    content:
+      application/json:
+        schema:
+          type: string
+        example: "COMPLETED"
+  responses:
+    '200':
+      description: "Successfully updated the beer order status"
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/BeerOrderDto.yaml'
+          example:
+            id: 1
+            version: 2
+            orderStatus: "COMPLETED"
+            createdDate: "2025-07-19T00:52:00Z"
+            updateDate: "2025-07-19T00:53:00Z"
+            customerId: 1
+            orderLines:
+              - id: 1
+                orderQuantity: 5
+                beerId: 1
+                beerName: "Pilsner Urquell"
+              - id: 2
+                orderQuantity: 3
+                beerId: 2
+                beerName: "Guinness Draught"
+    '400':
+      description: "Invalid status provided"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Invalid status: INVALID_STATUS"
+    '404':
+      description: "Beer order not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "BeerOrder with ID 1 not found"

@@ -1,0 +1,67 @@
+parameters:
+  - name: customerId
+    in: path
+    description: "The ID of the customer"
+    required: true
+    schema:
+      type: integer
+      format: int32
+    example: 1
+
+get:
+  tags:
+    - Beer Order
+  summary: Get beer orders by customer ID
+  description: "Retrieves all beer orders for a specific customer."
+  operationId: getBeerOrdersByCustomerId
+  security:
+    - api_key: []
+  responses:
+    '200':
+      description: "Successfully retrieved the list of beer orders for the customer"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../components/schemas/BeerOrderDto.yaml'
+          example:
+            - id: 1
+              version: 1
+              orderStatus: "NEW"
+              createdDate: "2025-07-19T00:52:00Z"
+              updateDate: "2025-07-19T00:52:00Z"
+              customerId: 1
+              orderLines:
+                - id: 1
+                  orderQuantity: 5
+                  beerId: 1
+                  beerName: "Pilsner Urquell"
+                - id: 2
+                  orderQuantity: 3
+                  beerId: 2
+                  beerName: "Guinness Draught"
+            - id: 3
+              version: 1
+              orderStatus: "COMPLETED"
+              createdDate: "2025-07-19T00:52:00Z"
+              updateDate: "2025-07-19T00:53:00Z"
+              customerId: 1
+              orderLines:
+                - id: 4
+                  orderQuantity: 2
+                  beerId: 3
+                  beerName: "Sierra Nevada Pale Ale"
+    '400':
+      description: "Bad request"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Bad request"

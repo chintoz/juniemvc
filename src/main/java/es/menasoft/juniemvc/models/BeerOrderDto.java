@@ -8,10 +8,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record BeerOrderDto(
+        //Read-only
         Integer id,
         Integer version,
+        // Order status, values such as NEWS, PROCESSING, COMPLETED ..
         String orderStatus,
+
+        // Read-only create date
         LocalDateTime createdDate,
+        // Read-only update date
         LocalDateTime updateDate,
         
         @NotNull(message = "Customer ID is required")

@@ -1,0 +1,141 @@
+get:
+  tags:
+    - Beer Order
+  summary: Get all beer orders
+  description: "Retrieves a list of all beer orders."
+  operationId: getAllBeerOrders
+  security:
+    - api_key: []
+  responses:
+    '200':
+      description: "Successfully retrieved the list of beer orders"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../components/schemas/BeerOrderDto.yaml'
+          example:
+            - id: 1
+              version: 1
+              orderStatus: "NEW"
+              createdDate: "2025-07-19T00:52:00Z"
+              updateDate: "2025-07-19T00:52:00Z"
+              customerId: 1
+              orderLines:
+                - id: 1
+                  orderQuantity: 5
+                  beerId: 1
+                  beerName: "Pilsner Urquell"
+                - id: 2
+                  orderQuantity: 3
+                  beerId: 2
+                  beerName: "Guinness Draught"
+            - id: 2
+              version: 1
+              orderStatus: "PROCESSING"
+              createdDate: "2025-07-19T00:52:00Z"
+              updateDate: "2025-07-19T00:52:00Z"
+              customerId: 2
+              orderLines:
+                - id: 3
+                  orderQuantity: 2
+                  beerId: 3
+                  beerName: "Sierra Nevada Pale Ale"
+    '400':
+      description: "Bad request"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Bad request"
+
+post:
+  tags:
+    - Beer Order
+  summary: Create a new beer order
+  description: "Creates a new beer order with the provided data."
+  operationId: createBeerOrder
+  security:
+    - api_key: []
+  requestBody:
+    description: "Beer order data to create a new order"
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/CreateBeerOrderCommand.yaml'
+        example:
+          customerId: 1
+          orderLines:
+            - orderQuantity: 5
+              beerId: 1
+            - orderQuantity: 3
+              beerId: 2
+  responses:
+    '201':
+      description: "Successfully created a new beer order"
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/BeerOrderDto.yaml'
+          example:
+            id: 3
+            version: 1
+            orderStatus: "NEW"
+            createdDate: "2025-07-19T00:52:00Z"
+            updateDate: "2025-07-19T00:52:00Z"
+            customerId: 1
+            orderLines:
+              - id: 4
+                orderQuantity: 5
+                beerId: 1
+                beerName: "Pilsner Urquell"
+              - id: 5
+                orderQuantity: 3
+                beerId: 2
+                beerName: "Guinness Draught"
+    '400':
+      description: "Invalid beer order data provided"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Validation failed"
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string
+                example:
+                  - field: "customerId"
+                    message: "Customer ID is required"
+    '404':
+      description: "Customer or beer not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "Customer with ID 1 not found"
