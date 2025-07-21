@@ -70,8 +70,7 @@ class CustomerController {
     @PutMapping("/{customerId}")
     public ResponseEntity<CustomerDto> updateCustomer(@PathVariable("customerId") Integer customerId, 
                                                      @Valid @RequestBody CustomerDto customerDto) {
-        CustomerDto updatedCustomer = customerService.updateCustomer(customerId, customerDto)
-                .orElseThrow(() -> new EntityNotFoundException("Customer", customerId));
+        CustomerDto updatedCustomer = customerService.updateCustomer(customerId, customerDto);
         return new ResponseEntity<>(updatedCustomer, HttpStatus.OK);
     }
 

@@ -1,6 +1,7 @@
 package es.menasoft.juniemvc.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import es.menasoft.juniemvc.exceptions.EntityNotFoundException;
 import es.menasoft.juniemvc.models.CustomerDto;
 import es.menasoft.juniemvc.services.CustomerService;
 import org.junit.jupiter.api.BeforeEach;
@@ -240,7 +241,7 @@ public class CustomerControllerTest {
                 LocalDateTime.now()
         );
 
-        given(customerService.updateCustomer(eq(1), any(CustomerDto.class))).willReturn(Optional.of(updatedCustomer));
+        given(customerService.updateCustomer(eq(1), any(CustomerDto.class))).willReturn(updatedCustomer);
 
         // When/Then
         mockMvc.perform(put("/api/v1/customers/1")
@@ -270,7 +271,8 @@ public class CustomerControllerTest {
                 null
         );
 
-        given(customerService.updateCustomer(eq(999), any(CustomerDto.class))).willReturn(Optional.empty());
+        given(customerService.updateCustomer(eq(999), any(CustomerDto.class)))
+                .willThrow(new EntityNotFoundException("Customer", 999));
 
         // When/Then
         mockMvc.perform(put("/api/v1/customers/999")

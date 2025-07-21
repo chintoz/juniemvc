@@ -1,6 +1,7 @@
 package es.menasoft.juniemvc.services;
 
 import es.menasoft.juniemvc.entities.Customer;
+import es.menasoft.juniemvc.exceptions.EntityNotFoundException;
 import es.menasoft.juniemvc.mappers.CustomerMapper;
 import es.menasoft.juniemvc.models.CustomerDto;
 import es.menasoft.juniemvc.repositories.CustomerRepository;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -297,13 +299,13 @@ class CustomerServiceImplTest {
         when(customerMapper.customerToCustomerDto(updatedCustomer)).thenReturn(updatedCustomerDto);
 
         // When
-        Optional<CustomerDto> result = customerService.updateCustomer(1, customerDtoToUpdate);
+        CustomerDto result = customerService.updateCustomer(1, customerDtoToUpdate);
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().id()).isEqualTo(1);
-        assertThat(result.get().name()).isEqualTo("Updated Customer");
-        assertThat(result.get().email()).isEqualTo("updated@example.com");
+        assertThat(result).isNotNull();
+        assertThat(result.id()).isEqualTo(1);
+        assertThat(result.name()).isEqualTo("Updated Customer");
+        assertThat(result.email()).isEqualTo("updated@example.com");
         verify(customerMapper).updateCustomerFromDto(eq(customerDtoToUpdate), any(Customer.class));
         verify(customerRepository).findById(1);
         verify(customerRepository).save(any(Customer.class));
@@ -330,11 +332,12 @@ class CustomerServiceImplTest {
 
         when(customerRepository.findById(999)).thenReturn(Optional.empty());
 
-        // When
-        Optional<CustomerDto> result = customerService.updateCustomer(999, customerDtoToUpdate);
-
-        // Then
-        assertThat(result).isEmpty();
+        // When/Then
+        assertThatThrownBy(() -> customerService.updateCustomer(999, customerDtoToUpdate))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Customer")
+                .hasMessageContaining("999");
+        
         verify(customerRepository).findById(999);
     }
 

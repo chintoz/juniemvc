@@ -31,9 +31,10 @@ public interface CustomerService {
      * Update an existing customer
      * @param id the ID of the customer to update
      * @param customerDto the updated customer DTO data
-     * @return an Optional containing the updated customer DTO if found, or empty if not found
+     * @return the updated customer DTO
+     * @throws es.menasoft.juniemvc.exceptions.EntityNotFoundException if the customer is not found
      */
-    Optional<CustomerDto> updateCustomer(Integer id, CustomerDto customerDto);
+    CustomerDto updateCustomer(Integer id, CustomerDto customerDto);
 
     /**
      * Delete a customer by its ID
