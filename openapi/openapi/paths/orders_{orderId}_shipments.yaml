@@ -1,0 +1,44 @@
+get:
+  tags:
+    - orders
+    - shipments
+  summary: Get shipments for a beer order
+  description: Returns a list of shipments for a specific beer order
+  operationId: getShipmentsByBeerOrderId
+  parameters:
+    - name: orderId
+      in: path
+      description: ID of the beer order to retrieve shipments for
+      required: true
+      schema:
+        type: integer
+        format: int32
+  responses:
+    '200':
+      description: A list of beer order shipments for the specified beer order
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../components/schemas/BeerOrderShipmentDto.yaml'
+    '404':
+      description: Beer order not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Beer order not found"
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Internal server error"

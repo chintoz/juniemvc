@@ -39,6 +39,10 @@ public class BeerOrder {
     @OneToMany(mappedBy = "beerOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     private Set<OrderLine> orderLines = new HashSet<>();
+    
+    @OneToMany(mappedBy = "beerOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
+    private Set<BeerOrderShipment> shipments = new HashSet<>();
 
     /**
      * Helper method to add an order line to this order and set the order on the order line
@@ -60,5 +64,27 @@ public class BeerOrder {
         orderLines.remove(orderLine);
         orderLine.setBeerOrder(null);
         return orderLine;
+    }
+    
+    /**
+     * Helper method to add a shipment to this order and set the order on the shipment
+     * @param shipment the shipment to add
+     * @return the shipment that was added
+     */
+    public BeerOrderShipment addShipment(BeerOrderShipment shipment) {
+        shipments.add(shipment);
+        shipment.setBeerOrder(this);
+        return shipment;
+    }
+
+    /**
+     * Helper method to remove a shipment from this order and set the order on the shipment to null
+     * @param shipment the shipment to remove
+     * @return the shipment that was removed
+     */
+    public BeerOrderShipment removeShipment(BeerOrderShipment shipment) {
+        shipments.remove(shipment);
+        shipment.setBeerOrder(null);
+        return shipment;
     }
 }

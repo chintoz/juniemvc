@@ -1,0 +1,50 @@
+type: object
+description: Data Transfer Object for Beer Order Shipment
+properties:
+  id:
+    type: integer
+    format: int32
+    description: Unique identifier for the shipment
+    readOnly: true
+    example: 1
+  version:
+    type: integer
+    format: int32
+    description: Version for optimistic locking
+    readOnly: true
+    example: 0
+  shipmentDate:
+    type: string
+    format: date
+    description: Date when the shipment was sent
+    example: "2025-07-21"
+  carrier:
+    type: string
+    description: Carrier company name
+    example: "UPS"
+  trackingNumber:
+    type: string
+    description: Tracking number provided by the carrier
+    example: "1Z999AA10123456784"
+  createdDate:
+    type: string
+    format: date-time
+    description: Date and time when the shipment was created
+    readOnly: true
+    example: "2025-07-21T10:15:30"
+  updateDate:
+    type: string
+    format: date-time
+    description: Date and time when the shipment was last updated
+    readOnly: true
+    example: "2025-07-21T10:15:30"
+  beerOrderId:
+    type: integer
+    format: int32
+    description: ID of the beer order this shipment belongs to
+    example: 1
+required:
+  - shipmentDate
+  - carrier
+  - trackingNumber
+  - beerOrderId

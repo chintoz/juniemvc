@@ -1,0 +1,26 @@
+type: object
+description: Command object for creating a new Beer Order Shipment
+properties:
+  beerOrderId:
+    type: integer
+    format: int32
+    description: ID of the beer order this shipment belongs to
+    example: 1
+  shipmentDate:
+    type: string
+    format: date
+    description: Date when the shipment was sent
+    example: "2025-07-21"
+  carrier:
+    type: string
+    description: Carrier company name
+    example: "UPS"
+  trackingNumber:
+    type: string
+    description: Tracking number provided by the carrier
+    example: "1Z999AA10123456784"
+required:
+  - beerOrderId
+  - shipmentDate
+  - carrier
+  - trackingNumber

@@ -1,0 +1,138 @@
+get:
+  tags:
+    - shipments
+  summary: Get a beer order shipment by ID
+  description: Returns a beer order shipment by its ID
+  operationId: getShipmentById
+  parameters:
+    - name: shipmentId
+      in: path
+      description: ID of the beer order shipment to retrieve
+      required: true
+      schema:
+        type: integer
+        format: int32
+  responses:
+    '200':
+      description: Beer order shipment found
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/BeerOrderShipmentDto.yaml'
+    '404':
+      description: Beer order shipment not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Beer order shipment not found"
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Internal server error"
+
+put:
+  tags:
+    - shipments
+  summary: Update a beer order shipment
+  description: Updates an existing beer order shipment and returns the updated shipment
+  operationId: updateShipment
+  parameters:
+    - name: shipmentId
+      in: path
+      description: ID of the beer order shipment to update
+      required: true
+      schema:
+        type: integer
+        format: int32
+  requestBody:
+    description: Updated beer order shipment
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/BeerOrderShipmentDto.yaml'
+  responses:
+    '200':
+      description: Beer order shipment updated
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/BeerOrderShipmentDto.yaml'
+    '400':
+      description: Invalid input
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Invalid input"
+    '404':
+      description: Beer order shipment not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Beer order shipment not found"
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Internal server error"
+
+delete:
+  tags:
+    - shipments
+  summary: Delete a beer order shipment
+  description: Deletes a beer order shipment by its ID
+  operationId: deleteShipment
+  parameters:
+    - name: shipmentId
+      in: path
+      description: ID of the beer order shipment to delete
+      required: true
+      schema:
+        type: integer
+        format: int32
+  responses:
+    '204':
+      description: Beer order shipment deleted
+    '404':
+      description: Beer order shipment not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Beer order shipment not found"
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Internal server error"
