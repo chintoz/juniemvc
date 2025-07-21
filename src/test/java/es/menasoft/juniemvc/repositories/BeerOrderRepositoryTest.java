@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,7 +18,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class BeerOrderRepositoryTest {
+@ActiveProfiles("test")
+public class BeerOrderRepositoryTest {
 
     @Autowired
     BeerOrderRepository beerOrderRepository;
@@ -32,12 +34,17 @@ class BeerOrderRepositoryTest {
     private Beer testBeer;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         // Create and save a test customer
         testCustomer = Customer.builder()
                 .name("Test Customer")
                 .email("test@example.com")
                 .phone("123-456-7890")
+                .addressLine1("123 Test St")
+                .addressLine2("Apt 456")
+                .city("Test City")
+                .state("Test State")
+                .postalCode("12345")
                 .build();
         testCustomer = customerRepository.save(testCustomer);
 
@@ -53,7 +60,7 @@ class BeerOrderRepositoryTest {
     }
 
     @Test
-    void testSaveBeerOrder() {
+    public void testSaveBeerOrder() {
         BeerOrder beerOrder = BeerOrder.builder()
                 .orderStatus("NEW")
                 .customer(testCustomer)
@@ -74,7 +81,7 @@ class BeerOrderRepositoryTest {
     }
 
     @Test
-    void testGetBeerOrderById() {
+    public void testGetBeerOrderById() {
         BeerOrder beerOrder = BeerOrder.builder()
                 .orderStatus("NEW")
                 .customer(testCustomer)
@@ -91,7 +98,7 @@ class BeerOrderRepositoryTest {
     }
 
     @Test
-    void testFindAllByCustomer() {
+    public void testFindAllByCustomer() {
         // Create and save two beer orders for the test customer
         BeerOrder beerOrder1 = BeerOrder.builder()
                 .orderStatus("NEW")
@@ -110,6 +117,11 @@ class BeerOrderRepositoryTest {
                 .name("Another Customer")
                 .email("another@example.com")
                 .phone("987-654-3210")
+                .addressLine1("456 Another St")
+                .addressLine2("Suite 789")
+                .city("Another City")
+                .state("Another State")
+                .postalCode("54321")
                 .build();
         anotherCustomer = customerRepository.save(anotherCustomer);
 
@@ -129,7 +141,7 @@ class BeerOrderRepositoryTest {
     }
 
     @Test
-    void testFindAllByCustomerId() {
+    public void testFindAllByCustomerId() {
         // Create and save two beer orders for the test customer
         BeerOrder beerOrder1 = BeerOrder.builder()
                 .orderStatus("NEW")
@@ -148,6 +160,11 @@ class BeerOrderRepositoryTest {
                 .name("Another Customer")
                 .email("another@example.com")
                 .phone("987-654-3210")
+                .addressLine1("456 Another St")
+                .addressLine2("Suite 789")
+                .city("Another City")
+                .state("Another State")
+                .postalCode("54321")
                 .build();
         anotherCustomer = customerRepository.save(anotherCustomer);
 
@@ -168,7 +185,7 @@ class BeerOrderRepositoryTest {
 
     @Test
     @Rollback
-    void testUpdateBeerOrder() {
+    public void testUpdateBeerOrder() {
         BeerOrder beerOrder = BeerOrder.builder()
                 .orderStatus("NEW")
                 .customer(testCustomer)
@@ -184,7 +201,7 @@ class BeerOrderRepositoryTest {
 
     @Test
     @Rollback
-    void testDeleteBeerOrder() {
+    public void testDeleteBeerOrder() {
         BeerOrder beerOrder = BeerOrder.builder()
                 .orderStatus("NEW")
                 .customer(testCustomer)

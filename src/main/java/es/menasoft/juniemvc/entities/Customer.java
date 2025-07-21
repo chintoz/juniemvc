@@ -1,6 +1,7 @@
 package es.menasoft.juniemvc.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -24,9 +25,30 @@ public class Customer {
     @Version
     private Integer version;
 
+    @NotNull
+    @Column(nullable = false)
     private String name;
+    
     private String email;
     private String phone;
+    
+    @NotNull
+    @Column(nullable = false)
+    private String addressLine1;
+    
+    private String addressLine2;
+    
+    @NotNull
+    @Column(nullable = false)
+    private String city;
+    
+    @NotNull
+    @Column(nullable = false)
+    private String state;
+    
+    @NotNull
+    @Column(nullable = false)
+    private String postalCode;
 
     @CreationTimestamp
     @Column(updatable = false)

@@ -1,0 +1,75 @@
+type: object
+required:
+  - name
+  - email
+  - phone
+  - addressLine1
+  - city
+  - state
+  - postalCode
+properties:
+  id:
+    type: integer
+    format: int32
+    description: "Unique identifier for the customer."
+    example: 1
+  version:
+    type: integer
+    format: int32
+    description: "Version number for optimistic locking."
+    example: 0
+  name:
+    type: string
+    description: "Name of the customer."
+    minLength: 2
+    maxLength: 100
+    example: "John Doe"
+  email:
+    type: string
+    format: email
+    description: "Email address of the customer."
+    example: "john.doe@example.com"
+  phone:
+    type: string
+    description: "Phone number of the customer."
+    minLength: 5
+    maxLength: 20
+    example: "555-123-4567"
+  addressLine1:
+    type: string
+    description: "First line of the customer's address."
+    maxLength: 255
+    example: "123 Main St"
+  addressLine2:
+    type: string
+    description: "Second line of the customer's address (optional)."
+    maxLength: 255
+    example: "Apt 4B"
+    nullable: true
+  city:
+    type: string
+    description: "City of the customer's address."
+    maxLength: 100
+    example: "Anytown"
+  state:
+    type: string
+    description: "State or province of the customer's address."
+    maxLength: 50
+    example: "CA"
+  postalCode:
+    type: string
+    description: "Postal code of the customer's address."
+    maxLength: 20
+    example: "12345"
+  createdDate:
+    type: string
+    format: date-time
+    description: "Date and time when the customer was created."
+    example: "2025-07-19T12:34:56Z"
+    nullable: true
+  updateDate:
+    type: string
+    format: date-time
+    description: "Date and time when the customer was last updated."
+    example: "2025-07-19T12:34:56Z"
+    nullable: true

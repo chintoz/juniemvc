@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class BeerControllerTest {
 
     @TestConfiguration
@@ -88,7 +90,7 @@ public class BeerControllerTest {
     }
 
     @Test
-    void testCreateBeer() throws Exception {
+    public void testCreateBeer() throws Exception {
         // Given
         BeerDto beerToSave = new BeerDto(
                 null,
@@ -118,7 +120,7 @@ public class BeerControllerTest {
     }
 
     @Test
-    void testCreateBeerValidationFail() throws Exception {
+    public void testCreateBeerValidationFail() throws Exception {
         // Given
         BeerDto invalidBeer = new BeerDto(
                 null,
@@ -144,7 +146,7 @@ public class BeerControllerTest {
     }
 
     @Test
-    void testGetBeerById() throws Exception {
+    public void testGetBeerById() throws Exception {
         // Given
         given(beerService.getBeerById(1)).willReturn(Optional.of(testBeer));
 
@@ -157,7 +159,7 @@ public class BeerControllerTest {
     }
 
     @Test
-    void testGetBeerByIdNotFound() throws Exception {
+    public void testGetBeerByIdNotFound() throws Exception {
         // Given
         given(beerService.getBeerById(999)).willReturn(Optional.empty());
 
@@ -167,7 +169,7 @@ public class BeerControllerTest {
     }
 
     @Test
-    void testGetAllBeers() throws Exception {
+    public void testGetAllBeers() throws Exception {
         // Given
         given(beerService.getAllBeers()).willReturn(testBeerList);
 
@@ -182,7 +184,7 @@ public class BeerControllerTest {
     }
 
     @Test
-    void testUpdateBeer() throws Exception {
+    public void testUpdateBeer() throws Exception {
         // Given
         BeerDto beerToUpdate = new BeerDto(
                 null,
@@ -221,7 +223,7 @@ public class BeerControllerTest {
     }
 
     @Test
-    void testUpdateBeerNotFound() throws Exception {
+    public void testUpdateBeerNotFound() throws Exception {
         // Given
         BeerDto beerToUpdate = new BeerDto(
                 null,
@@ -245,7 +247,7 @@ public class BeerControllerTest {
     }
 
     @Test
-    void testDeleteBeer() throws Exception {
+    public void testDeleteBeer() throws Exception {
         // Given
         given(beerService.deleteBeer(1)).willReturn(true);
 
@@ -257,7 +259,7 @@ public class BeerControllerTest {
     }
 
     @Test
-    void testDeleteBeerNotFound() throws Exception {
+    public void testDeleteBeerNotFound() throws Exception {
         // Given
         given(beerService.deleteBeer(999)).willReturn(false);
 

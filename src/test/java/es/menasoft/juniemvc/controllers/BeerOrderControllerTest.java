@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class BeerOrderControllerTest {
 
     @TestConfiguration
@@ -98,7 +100,7 @@ public class BeerOrderControllerTest {
     }
 
     @Test
-    void testCreateBeerOrder() throws Exception {
+    public void testCreateBeerOrder() throws Exception {
         // Given
         given(beerOrderService.createBeerOrder(any(CreateBeerOrderCommand.class))).willReturn(testBeerOrder);
 
@@ -114,7 +116,7 @@ public class BeerOrderControllerTest {
     }
 
     @Test
-    void testCreateBeerOrderValidationFail() throws Exception {
+    public void testCreateBeerOrderValidationFail() throws Exception {
         // Given
         CreateBeerOrderCommand invalidCommand = new CreateBeerOrderCommand(
                 null, // Invalid: null customerId
@@ -133,7 +135,7 @@ public class BeerOrderControllerTest {
     }
 
     @Test
-    void testGetBeerOrderById() throws Exception {
+    public void testGetBeerOrderById() throws Exception {
         // Given
         given(beerOrderService.getBeerOrderById(1)).willReturn(Optional.of(testBeerOrder));
 
@@ -147,7 +149,7 @@ public class BeerOrderControllerTest {
     }
 
     @Test
-    void testGetBeerOrderByIdNotFound() throws Exception {
+    public void testGetBeerOrderByIdNotFound() throws Exception {
         // Given
         given(beerOrderService.getBeerOrderById(999)).willReturn(Optional.empty());
 
@@ -157,7 +159,7 @@ public class BeerOrderControllerTest {
     }
 
     @Test
-    void testGetAllBeerOrders() throws Exception {
+    public void testGetAllBeerOrders() throws Exception {
         // Given
         given(beerOrderService.getAllBeerOrders()).willReturn(testBeerOrderList);
 
@@ -172,7 +174,7 @@ public class BeerOrderControllerTest {
     }
 
     @Test
-    void testGetBeerOrdersByCustomerId() throws Exception {
+    public void testGetBeerOrdersByCustomerId() throws Exception {
         // Given
         given(beerOrderService.getBeerOrdersByCustomerId(1)).willReturn(testBeerOrderList);
 
@@ -187,7 +189,7 @@ public class BeerOrderControllerTest {
     }
 
     @Test
-    void testUpdateBeerOrder() throws Exception {
+    public void testUpdateBeerOrder() throws Exception {
         // Given
         BeerOrderDto beerOrderToUpdate = new BeerOrderDto(
                 null,
@@ -221,7 +223,7 @@ public class BeerOrderControllerTest {
     }
 
     @Test
-    void testUpdateBeerOrderNotFound() throws Exception {
+    public void testUpdateBeerOrderNotFound() throws Exception {
         // Given
         BeerOrderDto beerOrderToUpdate = new BeerOrderDto(
                 null,
@@ -243,7 +245,7 @@ public class BeerOrderControllerTest {
     }
 
     @Test
-    void testUpdateBeerOrderStatus() throws Exception {
+    public void testUpdateBeerOrderStatus() throws Exception {
         // Given
         BeerOrderDto updatedBeerOrder = new BeerOrderDto(
                 1,
@@ -267,7 +269,7 @@ public class BeerOrderControllerTest {
     }
 
     @Test
-    void testUpdateBeerOrderStatusNotFound() throws Exception {
+    public void testUpdateBeerOrderStatusNotFound() throws Exception {
         // Given
         given(beerOrderService.updateBeerOrderStatus(eq(999), eq("COMPLETED"))).willReturn(Optional.empty());
 
@@ -279,7 +281,7 @@ public class BeerOrderControllerTest {
     }
 
     @Test
-    void testDeleteBeerOrder() throws Exception {
+    public void testDeleteBeerOrder() throws Exception {
         // Given
         given(beerOrderService.deleteBeerOrder(1)).willReturn(true);
 
@@ -291,7 +293,7 @@ public class BeerOrderControllerTest {
     }
 
     @Test
-    void testDeleteBeerOrderNotFound() throws Exception {
+    public void testDeleteBeerOrderNotFound() throws Exception {
         // Given
         given(beerOrderService.deleteBeerOrder(999)).willReturn(false);
 

@@ -89,6 +89,9 @@ logger.atDebug()
 * Version numbers should be sequential and can include dots and underscores (e.g., `V1_1__`, `V1.2__`).
 * Use repeatable migrations for scripts that can be run multiple times with prefix `R__` (e.g., `R__create_views.sql`).
 * Configure Flyway properties in `application.properties` or `application.yml` with the `spring.flyway` prefix.
+* Use H2 compliant SQL syntax for database migrations.
+* When altering tables to add a property with a foreign key constraint, add the new column first and then add the foreign
+  key constraint in a second SQL statement.
 
 ## 16. OpenAPI Specification Guidelines
 * **API Documentation Structure:** The OpenAPI specification is organized in a modular way with the main file `openapi.yaml` referencing other files for paths, components, and schemas.
@@ -116,3 +119,19 @@ logger.atDebug()
   * This command runs `redocly lint` to check for errors and inconsistencies.
   * To preview the documentation, run `npm start` which uses `redocly preview-docs`.
   * To bundle the specification into a single file, run `npm run build` which creates `dist/bundle.yaml`.
+
+## 17. Use Project Lombok
+* Use Lombok to reduce boilerplate code.
+* Enable annotation processing for your IDE to generate boilerplate code for you.
+* When adding builder to a class, if the class extends another class, add `@SuperBuilder` for the builder.
+
+## 18. Use Mapstruct for Type Conversions
+* Use Mapstruct to convert between domain objects and DTOs.
+* Use `@Mapper` to configure the mapping between the two classes.
+* Use `@Mapping` to configure the mapping between the two fields.
+* After modifying a Mapper, recompile the project to generate the new Mapper implementation.
+* Use Mappers to update existing entities.
+
+## 19. Service Operations
+* When updating existing entities, use Mappers to update existing entities. The entity should be fetched from the database
+  and then updated using the mapper prior to saving the entity back to the database.

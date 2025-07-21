@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -46,6 +47,11 @@ class CustomerServiceImplTest {
                 .name("Test Customer")
                 .email("test@example.com")
                 .phone("123-456-7890")
+                .addressLine1("123 Main St")
+                .addressLine2("Apt 4B")
+                .city("Anytown")
+                .state("CA")
+                .postalCode("12345")
                 .build();
 
         Customer testCustomer2 = Customer.builder()
@@ -53,6 +59,10 @@ class CustomerServiceImplTest {
                 .name("Another Customer")
                 .email("another@example.com")
                 .phone("987-654-3210")
+                .addressLine1("456 Oak St")
+                .city("Othertown")
+                .state("NY")
+                .postalCode("67890")
                 .build();
 
         testCustomerList = Arrays.asList(testCustomer, testCustomer2);
@@ -64,6 +74,11 @@ class CustomerServiceImplTest {
                 "Test Customer",
                 "test@example.com",
                 "123-456-7890",
+                "123 Main St",
+                "Apt 4B",
+                "Anytown",
+                "CA",
+                "12345",
                 null,
                 null
         );
@@ -74,6 +89,11 @@ class CustomerServiceImplTest {
                 "Another Customer",
                 "another@example.com",
                 "987-654-3210",
+                "456 Oak St",
+                null,
+                "Othertown",
+                "NY",
+                "67890",
                 null,
                 null
         );
@@ -90,6 +110,11 @@ class CustomerServiceImplTest {
                 "New Customer",
                 "new@example.com",
                 "555-555-5555",
+                "789 New St",
+                "Suite 3C",
+                "Newtown",
+                "CA",
+                "54321",
                 null,
                 null
         );
@@ -98,6 +123,11 @@ class CustomerServiceImplTest {
                 .name("New Customer")
                 .email("new@example.com")
                 .phone("555-555-5555")
+                .addressLine1("789 New St")
+                .addressLine2("Suite 3C")
+                .city("Newtown")
+                .state("CA")
+                .postalCode("54321")
                 .build();
 
         Customer savedCustomer = Customer.builder()
@@ -105,6 +135,11 @@ class CustomerServiceImplTest {
                 .name("New Customer")
                 .email("new@example.com")
                 .phone("555-555-5555")
+                .addressLine1("789 New St")
+                .addressLine2("Suite 3C")
+                .city("Newtown")
+                .state("CA")
+                .postalCode("54321")
                 .build();
 
         CustomerDto savedCustomerDto = new CustomerDto(
@@ -113,6 +148,11 @@ class CustomerServiceImplTest {
                 "New Customer",
                 "new@example.com",
                 "555-555-5555",
+                "789 New St",
+                "Suite 3C",
+                "Newtown",
+                "CA",
+                "54321",
                 null,
                 null
         );
@@ -193,6 +233,11 @@ class CustomerServiceImplTest {
                 "Updated Customer",
                 "updated@example.com",
                 "111-222-3333",
+                "123 Updated St",
+                "Apt 5C",
+                "Newtown",
+                "CA",
+                "12345",
                 null,
                 null
         );
@@ -201,6 +246,11 @@ class CustomerServiceImplTest {
                 .name("Updated Customer")
                 .email("updated@example.com")
                 .phone("111-222-3333")
+                .addressLine1("123 Updated St")
+                .addressLine2("Apt 5C")
+                .city("Newtown")
+                .state("CA")
+                .postalCode("12345")
                 .build();
 
         Customer existingCustomer = Customer.builder()
@@ -208,6 +258,11 @@ class CustomerServiceImplTest {
                 .name("Test Customer")
                 .email("test@example.com")
                 .phone("123-456-7890")
+                .addressLine1("123 Main St")
+                .addressLine2("Apt 4B")
+                .city("Anytown")
+                .state("CA")
+                .postalCode("12345")
                 .build();
 
         Customer updatedCustomer = Customer.builder()
@@ -215,6 +270,11 @@ class CustomerServiceImplTest {
                 .name("Updated Customer")
                 .email("updated@example.com")
                 .phone("111-222-3333")
+                .addressLine1("123 Updated St")
+                .addressLine2("Apt 5C")
+                .city("Newtown")
+                .state("CA")
+                .postalCode("12345")
                 .build();
 
         CustomerDto updatedCustomerDto = new CustomerDto(
@@ -223,11 +283,15 @@ class CustomerServiceImplTest {
                 "Updated Customer",
                 "updated@example.com",
                 "111-222-3333",
+                "123 Updated St",
+                "Apt 5C",
+                "Newtown",
+                "CA",
+                "12345",
                 null,
                 null
         );
 
-        when(customerMapper.customerDtoToCustomer(customerDtoToUpdate)).thenReturn(customerToUpdate);
         when(customerRepository.findById(1)).thenReturn(Optional.of(existingCustomer));
         when(customerRepository.save(any(Customer.class))).thenReturn(updatedCustomer);
         when(customerMapper.customerToCustomerDto(updatedCustomer)).thenReturn(updatedCustomerDto);
@@ -240,7 +304,7 @@ class CustomerServiceImplTest {
         assertThat(result.get().id()).isEqualTo(1);
         assertThat(result.get().name()).isEqualTo("Updated Customer");
         assertThat(result.get().email()).isEqualTo("updated@example.com");
-        verify(customerMapper).customerDtoToCustomer(customerDtoToUpdate);
+        verify(customerMapper).updateCustomerFromDto(eq(customerDtoToUpdate), any(Customer.class));
         verify(customerRepository).findById(1);
         verify(customerRepository).save(any(Customer.class));
         verify(customerMapper).customerToCustomerDto(updatedCustomer);
@@ -255,6 +319,11 @@ class CustomerServiceImplTest {
                 "Updated Customer",
                 "updated@example.com",
                 "111-222-3333",
+                "123 Updated St",
+                "Apt 5C",
+                "Newtown",
+                "CA",
+                "12345",
                 null,
                 null
         );

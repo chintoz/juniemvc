@@ -1,0 +1,127 @@
+get:
+  tags:
+    - Customer
+  summary: Get all customers
+  description: "Retrieves a list of all customers."
+  operationId: getAllCustomers
+  security:
+    - api_key: []
+  responses:
+    '200':
+      description: "Successfully retrieved the list of customers"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../components/schemas/CustomerDto.yaml'
+          example:
+            - id: 1
+              version: 1
+              name: "John Doe"
+              email: "john.doe@example.com"
+              phone: "555-123-4567"
+              addressLine1: "123 Main St"
+              addressLine2: "Apt 4B"
+              city: "Anytown"
+              state: "CA"
+              postalCode: "12345"
+              createdDate: "2025-07-19T00:34:00Z"
+              updateDate: "2025-07-19T00:34:00Z"
+            - id: 2
+              version: 1
+              name: "Jane Smith"
+              email: "jane.smith@example.com"
+              phone: "555-987-6543"
+              addressLine1: "456 Oak St"
+              addressLine2: null
+              city: "Othertown"
+              state: "NY"
+              postalCode: "67890"
+              createdDate: "2025-07-19T00:34:00Z"
+              updateDate: "2025-07-19T00:34:00Z"
+    '400':
+      description: "Bad request"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Bad request"
+
+post:
+  tags:
+    - Customer
+  summary: Create a new customer
+  description: "Creates a new customer with the provided data."
+  operationId: createCustomer
+  security:
+    - api_key: []
+  requestBody:
+    description: "Customer data to create a new customer"
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/CustomerDto.yaml'
+        example:
+          name: "New Customer"
+          email: "new.customer@example.com"
+          phone: "555-555-5555"
+          addressLine1: "789 New St"
+          addressLine2: "Suite 3C"
+          city: "Newtown"
+          state: "CA"
+          postalCode: "54321"
+  responses:
+    '201':
+      description: "Successfully created a new customer"
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/CustomerDto.yaml'
+          example:
+            id: 3
+            version: 1
+            name: "New Customer"
+            email: "new.customer@example.com"
+            phone: "555-555-5555"
+            addressLine1: "789 New St"
+            addressLine2: "Suite 3C"
+            city: "Newtown"
+            state: "CA"
+            postalCode: "54321"
+            createdDate: "2025-07-19T00:34:00Z"
+            updateDate: "2025-07-19T00:34:00Z"
+    '400':
+      description: "Invalid customer data provided"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Validation failed"
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string
+                example:
+                  - field: "name"
+                    message: "Name is required"
+                  - field: "email"
+                    message: "Email must be valid"

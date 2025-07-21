@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,7 +18,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class OrderLineRepositoryTest {
+@ActiveProfiles("test")
+public class OrderLineRepositoryTest {
 
     @Autowired
     OrderLineRepository orderLineRepository;
@@ -41,12 +43,17 @@ class OrderLineRepositoryTest {
     private OrderLine testOrderLine3;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         // Create and save a test customer
         testCustomer = Customer.builder()
                 .name("Test Customer")
                 .email("test@example.com")
                 .phone("123-456-7890")
+                .addressLine1("123 Test St")
+                .addressLine2("Apt 456")
+                .city("Test City")
+                .state("Test State")
+                .postalCode("12345")
                 .build();
         testCustomer = customerRepository.save(testCustomer);
 
@@ -106,7 +113,7 @@ class OrderLineRepositoryTest {
     }
 
     @Test
-    void testSaveOrderLine() {
+    public void testSaveOrderLine() {
         OrderLine orderLine = OrderLine.builder()
                 .orderQuantity(2)
                 .beer(testBeer2)
@@ -120,7 +127,7 @@ class OrderLineRepositoryTest {
     }
 
     @Test
-    void testGetOrderLineById() {
+    public void testGetOrderLineById() {
         Optional<OrderLine> fetchedOrderLineOptional = orderLineRepository.findById(testOrderLine1.getId());
 
         assertThat(fetchedOrderLineOptional).isPresent();
@@ -131,7 +138,7 @@ class OrderLineRepositoryTest {
     }
 
     @Test
-    void testFindAllByBeer() {
+    public void testFindAllByBeer() {
         List<OrderLine> orderLines = orderLineRepository.findAllByBeer(testBeer1);
 
         assertThat(orderLines).isNotNull();
@@ -141,7 +148,7 @@ class OrderLineRepositoryTest {
     }
 
     @Test
-    void testFindAllByBeerId() {
+    public void testFindAllByBeerId() {
         List<OrderLine> orderLines = orderLineRepository.findAllByBeerId(testBeer1.getId());
 
         assertThat(orderLines).isNotNull();
@@ -151,7 +158,7 @@ class OrderLineRepositoryTest {
     }
 
     @Test
-    void testFindAllByBeerOrder() {
+    public void testFindAllByBeerOrder() {
         List<OrderLine> orderLines = orderLineRepository.findAllByBeerOrder(testBeerOrder1);
 
         assertThat(orderLines).isNotNull();
@@ -161,7 +168,7 @@ class OrderLineRepositoryTest {
     }
 
     @Test
-    void testFindAllByBeerOrderId() {
+    public void testFindAllByBeerOrderId() {
         List<OrderLine> orderLines = orderLineRepository.findAllByBeerOrderId(testBeerOrder1.getId());
 
         assertThat(orderLines).isNotNull();
@@ -171,7 +178,7 @@ class OrderLineRepositoryTest {
     }
 
     @Test
-    void testFindAllByBeerAndBeerOrder() {
+    public void testFindAllByBeerAndBeerOrder() {
         List<OrderLine> orderLines = orderLineRepository.findAllByBeerAndBeerOrder(testBeer1, testBeerOrder1);
 
         assertThat(orderLines).isNotNull();
@@ -181,7 +188,7 @@ class OrderLineRepositoryTest {
     }
 
     @Test
-    void testFindAllByBeerIdAndBeerOrderId() {
+    public void testFindAllByBeerIdAndBeerOrderId() {
         List<OrderLine> orderLines = orderLineRepository.findAllByBeerIdAndBeerOrderId(testBeer1.getId(), testBeerOrder1.getId());
 
         assertThat(orderLines).isNotNull();
@@ -192,7 +199,7 @@ class OrderLineRepositoryTest {
 
     @Test
     @Rollback
-    void testUpdateOrderLine() {
+    public void testUpdateOrderLine() {
         testOrderLine1.setOrderQuantity(15);
         OrderLine updatedOrderLine = orderLineRepository.save(testOrderLine1);
         
@@ -201,7 +208,7 @@ class OrderLineRepositoryTest {
 
     @Test
     @Rollback
-    void testDeleteOrderLine() {
+    public void testDeleteOrderLine() {
         orderLineRepository.deleteById(testOrderLine1.getId());
         
         Optional<OrderLine> deletedOrderLine = orderLineRepository.findById(testOrderLine1.getId());

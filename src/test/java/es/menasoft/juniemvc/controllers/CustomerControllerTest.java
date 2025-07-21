@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
@@ -32,6 +33,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestPropertySource(properties = {
+    "spring.jpa.hibernate.ddl-auto=create-drop",
+    "spring.flyway.enabled=false"
+})
 public class CustomerControllerTest {
 
     @TestConfiguration
@@ -63,6 +68,11 @@ public class CustomerControllerTest {
                 "Test Customer",
                 "test@example.com",
                 "123-456-7890",
+                "123 Main St",
+                "Apt 4B",
+                "Anytown",
+                "CA",
+                "12345",
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -73,6 +83,11 @@ public class CustomerControllerTest {
                 "Another Customer",
                 "another@example.com",
                 "987-654-3210",
+                "456 Oak St",
+                "Suite 7C",
+                "Othertown",
+                "NY",
+                "67890",
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -89,6 +104,11 @@ public class CustomerControllerTest {
                 "New Customer",
                 "new@example.com",
                 "555-555-5555",
+                "789 New St",
+                "Suite 3C",
+                "Newtown",
+                "CA",
+                "54321",
                 null,
                 null
         );
@@ -99,6 +119,11 @@ public class CustomerControllerTest {
                 "New Customer",
                 "new@example.com",
                 "555-555-5555",
+                "789 New St",
+                "Suite 3C",
+                "Newtown",
+                "CA",
+                "54321",
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -124,6 +149,11 @@ public class CustomerControllerTest {
                 "", // Invalid: empty name
                 "invalid-email", // Invalid: not a valid email
                 "123", // Invalid: too short
+                "", // Invalid: empty address line 1
+                null,
+                "", // Invalid: empty city
+                "", // Invalid: empty state
+                "", // Invalid: empty postal code
                 null,
                 null
         );
@@ -186,6 +216,11 @@ public class CustomerControllerTest {
                 "Updated Customer",
                 "updated@example.com",
                 "111-222-3333",
+                "123 Updated St",
+                "Apt 5C",
+                "Newtown",
+                "CA",
+                "12345",
                 null,
                 null
         );
@@ -196,6 +231,11 @@ public class CustomerControllerTest {
                 "Updated Customer",
                 "updated@example.com",
                 "111-222-3333",
+                "123 Updated St",
+                "Apt 5C",
+                "Newtown",
+                "CA",
+                "12345",
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -221,6 +261,11 @@ public class CustomerControllerTest {
                 "Updated Customer",
                 "updated@example.com",
                 "111-222-3333",
+                "123 Updated St",
+                "Apt 5C",
+                "Newtown",
+                "CA",
+                "12345",
                 null,
                 null
         );
