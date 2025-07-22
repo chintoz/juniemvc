@@ -1,39 +1,57 @@
 get:
   tags:
     - Beer
-  summary: Get all beers
-  description: "Retrieves a list of all beers."
-  operationId: getAllBeers
+  summary: Get beers with optional filtering and pagination
+  description: "Retrieves a paginated list of beers with optional filtering by name."
+  operationId: getBeers
   security:
     - api_key: []
+  parameters:
+    - name: beerName
+      in: query
+      description: Filter beers by name (case-insensitive, partial match)
+      required: false
+      schema:
+        type: string
+    - name: page
+      in: query
+      description: Page number (0-based)
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    - name: size
+      in: query
+      description: Page size
+      required: false
+      schema:
+        type: integer
+        default: 20
+        minimum: 1
+    - name: sortField
+      in: query
+      description: Field to sort by
+      required: false
+      schema:
+        type: string
+        default: "id"
+        enum: ["id", "beerName", "beerStyle", "price", "quantityOnHand", "createdDate", "updateDate"]
+    - name: sortDirection
+      in: query
+      description: Sort direction
+      required: false
+      schema:
+        type: string
+        default: "ASC"
+        enum: ["ASC", "DESC"]
   responses:
     '200':
-      description: "Successfully retrieved the list of beers"
+      description: "Successfully retrieved the paginated list of beers"
       content:
         application/json:
           schema:
-            type: array
-            items:
-              $ref: '../components/schemas/Beer.yaml'
-          example:
-            - id: 1
-              version: 1
-              beerName: "Pilsner Urquell"
-              beerStyle: "PILSNER"
-              upc: "0631234200036"
-              quantityOnHand: 100
-              price: 12.99
-              createdDate: "2025-07-19T00:34:00Z"
-              updateDate: "2025-07-19T00:34:00Z"
-            - id: 2
-              version: 1
-              beerName: "Guinness Draught"
-              beerStyle: "STOUT"
-              upc: "0631234300019"
-              quantityOnHand: 200
-              price: 14.99
-              createdDate: "2025-07-19T00:34:00Z"
-              updateDate: "2025-07-19T00:34:00Z"
+            $ref: '../components/schemas/PagedBeerResponse.yaml'
     '400':
       description: "Bad request"
       content:

@@ -5,6 +5,10 @@ import es.menasoft.juniemvc.models.BeerDto;
 import es.menasoft.juniemvc.services.BeerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,10 +56,37 @@ class BeerController {
      * Retrieves all beers.
      *
      * @return a list of all beers with status 200 (OK)
+     * @deprecated Use {@link #getBeers(String, Integer, Integer, String, String)} instead
      */
-    @GetMapping
+    @GetMapping(path = "/all")
+    @Deprecated
     public ResponseEntity<List<BeerDto>> getAllBeers() {
         List<BeerDto> beers = beerService.getAllBeers();
+        return new ResponseEntity<>(beers, HttpStatus.OK);
+    }
+    
+    /**
+     * Retrieves beers with optional filtering by name and pagination.
+     *
+     * @param beerName optional name filter (can be null or empty)
+     * @param page page number (0-based, defaults to 0)
+     * @param size page size (defaults to 20)
+     * @param sortField field to sort by (defaults to "id")
+     * @param sortDirection sort direction (ASC or DESC, defaults to ASC)
+     * @return a page of beers matching the criteria with status 200 (OK)
+     */
+    @GetMapping
+    public ResponseEntity<Page<BeerDto>> getBeers(
+            @RequestParam(required = false) String beerName,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "20") Integer size,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "ASC") String sortDirection) {
+        
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        
+        Page<BeerDto> beers = beerService.getBeers(beerName, pageable);
         return new ResponseEntity<>(beers, HttpStatus.OK);
     }
 

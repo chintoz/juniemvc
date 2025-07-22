@@ -1,6 +1,8 @@
 package es.menasoft.juniemvc.services;
 
 import es.menasoft.juniemvc.models.BeerDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,14 @@ public interface BeerService {
      * @return a list of all beer DTOs
      */
     List<BeerDto> getAllBeers();
+    
+    /**
+     * Get beers with optional filtering by name and pagination
+     * @param beerName optional name filter (can be null or empty)
+     * @param pageable pagination information
+     * @return a page of beer DTOs matching the criteria
+     */
+    Page<BeerDto> getBeers(String beerName, Pageable pageable);
 
     /**
      * Update an existing beer

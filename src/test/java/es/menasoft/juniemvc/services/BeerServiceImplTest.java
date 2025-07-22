@@ -10,6 +10,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -18,6 +22,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -322,5 +328,62 @@ class BeerServiceImplTest {
         // Then
         assertThat(result).isFalse();
         verify(beerRepository).findById(999);
+    }
+    
+    @Test
+    void getBeersWithNameFilter() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Beer> filteredBeerList = Arrays.asList(testBeer);
+        Page<Beer> filteredBeerPage = new PageImpl<>(filteredBeerList, pageable, filteredBeerList.size());
+        
+        when(beerRepository.findByBeerNameContainingIgnoreCase(eq("Test"), any(Pageable.class)))
+            .thenReturn(filteredBeerPage);
+        when(beerMapper.beerToBeerDto(any(Beer.class))).thenReturn(testBeerDto);
+        
+        // When
+        Page<BeerDto> result = beerService.getBeers("Test", pageable);
+        
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).beerName()).isEqualTo("Test Beer");
+        verify(beerRepository).findByBeerNameContainingIgnoreCase(eq("Test"), any(Pageable.class));
+    }
+    
+    @Test
+    void getBeersWithoutNameFilter() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Beer> allBeersPage = new PageImpl<>(testBeerList, pageable, testBeerList.size());
+        
+        when(beerRepository.findAll(any(Pageable.class))).thenReturn(allBeersPage);
+        when(beerMapper.beerToBeerDto(any(Beer.class))).thenReturn(testBeerDto);
+        
+        // When
+        Page<BeerDto> result = beerService.getBeers(null, pageable);
+        
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(2);
+        verify(beerRepository).findAll(any(Pageable.class));
+    }
+    
+    @Test
+    void getBeersWithEmptyNameFilter() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Beer> allBeersPage = new PageImpl<>(testBeerList, pageable, testBeerList.size());
+        
+        when(beerRepository.findAll(any(Pageable.class))).thenReturn(allBeersPage);
+        when(beerMapper.beerToBeerDto(any(Beer.class))).thenReturn(testBeerDto);
+        
+        // When
+        Page<BeerDto> result = beerService.getBeers("", pageable);
+        
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(2);
+        verify(beerRepository).findAll(any(Pageable.class));
     }
 }

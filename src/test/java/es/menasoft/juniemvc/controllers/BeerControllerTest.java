@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -33,6 +37,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.data.domain.Sort;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -174,13 +179,71 @@ public class BeerControllerTest {
         given(beerService.getAllBeers()).willReturn(testBeerList);
 
         // When/Then
-        mockMvc.perform(get("/api/v1/beers"))
+        mockMvc.perform(get("/api/v1/beers/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[0].beerName", is("Test Beer")))
                 .andExpect(jsonPath("$[1].id", is(2)))
                 .andExpect(jsonPath("$[1].beerName", is("Another Beer")));
+    }
+    
+    @Test
+    public void testGetBeersWithNameFilter() throws Exception {
+        // Given
+        Pageable pageable = PageRequest.of(0, 20);
+        List<BeerDto> filteredList = Arrays.asList(testBeer);
+        Page<BeerDto> beerPage = new PageImpl<>(filteredList, pageable, filteredList.size());
+        
+        given(beerService.getBeers(eq("Test"), any(Pageable.class))).willReturn(beerPage);
+        
+        // When/Then
+        mockMvc.perform(get("/api/v1/beers")
+                .param("beerName", "Test"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].id", is(1)))
+                .andExpect(jsonPath("$.content[0].beerName", is("Test Beer")))
+                .andExpect(jsonPath("$.totalElements", is(1)));
+    }
+    
+    @Test
+    public void testGetBeersWithPagination() throws Exception {
+        // Given
+        Pageable pageable = PageRequest.of(0, 1);
+        List<BeerDto> pagedList = Arrays.asList(testBeer);
+        Page<BeerDto> beerPage = new PageImpl<>(pagedList, pageable, testBeerList.size());
+        
+        given(beerService.getBeers(eq(null), any(Pageable.class))).willReturn(beerPage);
+        
+        // When/Then
+        mockMvc.perform(get("/api/v1/beers")
+                .param("page", "0")
+                .param("size", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].id", is(1)))
+                .andExpect(jsonPath("$.content[0].beerName", is("Test Beer")))
+                .andExpect(jsonPath("$.totalElements", is(2)))
+                .andExpect(jsonPath("$.totalPages", is(2)));
+    }
+    
+    @Test
+    public void testGetBeersWithSorting() throws Exception {
+        // Given
+        Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "beerName"));
+        Page<BeerDto> beerPage = new PageImpl<>(testBeerList, pageable, testBeerList.size());
+        
+        given(beerService.getBeers(eq(null), any(Pageable.class))).willReturn(beerPage);
+        
+        // When/Then
+        mockMvc.perform(get("/api/v1/beers")
+                .param("sortField", "beerName")
+                .param("sortDirection", "DESC"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].id", is(1)))
+                .andExpect(jsonPath("$.content[1].id", is(2)));
     }
 
     @Test

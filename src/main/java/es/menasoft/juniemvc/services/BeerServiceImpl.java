@@ -5,8 +5,11 @@ import es.menasoft.juniemvc.mappers.BeerMapper;
 import es.menasoft.juniemvc.models.BeerDto;
 import es.menasoft.juniemvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +43,22 @@ public class BeerServiceImpl implements BeerService {
         return beerRepository.findAll().stream()
                 .map(beerMapper::beerToBeerDto)
                 .collect(Collectors.toList());
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BeerDto> getBeers(String beerName, Pageable pageable) {
+        Page<Beer> beerPage;
+        
+        if (StringUtils.hasText(beerName)) {
+            // If beerName is provided, search by name
+            beerPage = beerRepository.findByBeerNameContainingIgnoreCase(beerName, pageable);
+        } else {
+            // If beerName is null or empty, return all beers with pagination
+            beerPage = beerRepository.findAll(pageable);
+        }
+        
+        return beerPage.map(beerMapper::beerToBeerDto);
     }
 
     @Override
