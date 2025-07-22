@@ -47,14 +47,24 @@ public class BeerServiceImpl implements BeerService {
     
     @Override
     @Transactional(readOnly = true)
-    public Page<BeerDto> getBeers(String beerName, Pageable pageable) {
+    public Page<BeerDto> getBeers(String beerName, String beerStyle, Pageable pageable) {
         Page<Beer> beerPage;
         
-        if (StringUtils.hasText(beerName)) {
-            // If beerName is provided, search by name
+        boolean hasName = StringUtils.hasText(beerName);
+        boolean hasStyle = StringUtils.hasText(beerStyle);
+        
+        if (hasName && hasStyle) {
+            // If both beerName and beerStyle are provided
+            beerPage = beerRepository.findByBeerNameContainingIgnoreCaseAndBeerStyleContainingIgnoreCase(
+                    beerName, beerStyle, pageable);
+        } else if (hasName) {
+            // If only beerName is provided
             beerPage = beerRepository.findByBeerNameContainingIgnoreCase(beerName, pageable);
+        } else if (hasStyle) {
+            // If only beerStyle is provided
+            beerPage = beerRepository.findByBeerStyleContainingIgnoreCase(beerStyle, pageable);
         } else {
-            // If beerName is null or empty, return all beers with pagination
+            // If neither beerName nor beerStyle is provided
             beerPage = beerRepository.findAll(pageable);
         }
         

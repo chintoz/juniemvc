@@ -342,7 +342,7 @@ class BeerServiceImplTest {
         when(beerMapper.beerToBeerDto(any(Beer.class))).thenReturn(testBeerDto);
         
         // When
-        Page<BeerDto> result = beerService.getBeers("Test", pageable);
+        Page<BeerDto> result = beerService.getBeers("Test", null, pageable);
         
         // Then
         assertThat(result).isNotNull();
@@ -361,7 +361,7 @@ class BeerServiceImplTest {
         when(beerMapper.beerToBeerDto(any(Beer.class))).thenReturn(testBeerDto);
         
         // When
-        Page<BeerDto> result = beerService.getBeers(null, pageable);
+        Page<BeerDto> result = beerService.getBeers(null, null, pageable);
         
         // Then
         assertThat(result).isNotNull();
@@ -379,11 +379,74 @@ class BeerServiceImplTest {
         when(beerMapper.beerToBeerDto(any(Beer.class))).thenReturn(testBeerDto);
         
         // When
-        Page<BeerDto> result = beerService.getBeers("", pageable);
+        Page<BeerDto> result = beerService.getBeers("", null, pageable);
         
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(2);
         verify(beerRepository).findAll(any(Pageable.class));
+    }
+    
+    @Test
+    void getBeersWithStyleFilter() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Beer> filteredBeerList = Arrays.asList(testBeer);
+        Page<Beer> filteredBeerPage = new PageImpl<>(filteredBeerList, pageable, filteredBeerList.size());
+        
+        when(beerRepository.findByBeerStyleContainingIgnoreCase(eq("IPA"), any(Pageable.class)))
+            .thenReturn(filteredBeerPage);
+        when(beerMapper.beerToBeerDto(any(Beer.class))).thenReturn(testBeerDto);
+        
+        // When
+        Page<BeerDto> result = beerService.getBeers(null, "IPA", pageable);
+        
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).beerStyle()).isEqualTo("IPA");
+        verify(beerRepository).findByBeerStyleContainingIgnoreCase(eq("IPA"), any(Pageable.class));
+    }
+    
+    @Test
+    void getBeersWithEmptyStyleFilter() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Beer> allBeersPage = new PageImpl<>(testBeerList, pageable, testBeerList.size());
+        
+        when(beerRepository.findAll(any(Pageable.class))).thenReturn(allBeersPage);
+        when(beerMapper.beerToBeerDto(any(Beer.class))).thenReturn(testBeerDto);
+        
+        // When
+        Page<BeerDto> result = beerService.getBeers(null, "", pageable);
+        
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(2);
+        verify(beerRepository).findAll(any(Pageable.class));
+    }
+    
+    @Test
+    void getBeersWithNameAndStyleFilter() {
+        // Given
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Beer> filteredBeerList = Arrays.asList(testBeer);
+        Page<Beer> filteredBeerPage = new PageImpl<>(filteredBeerList, pageable, filteredBeerList.size());
+        
+        when(beerRepository.findByBeerNameContainingIgnoreCaseAndBeerStyleContainingIgnoreCase(
+                eq("Test"), eq("IPA"), any(Pageable.class)))
+            .thenReturn(filteredBeerPage);
+        when(beerMapper.beerToBeerDto(any(Beer.class))).thenReturn(testBeerDto);
+        
+        // When
+        Page<BeerDto> result = beerService.getBeers("Test", "IPA", pageable);
+        
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).beerName()).isEqualTo("Test Beer");
+        assertThat(result.getContent().get(0).beerStyle()).isEqualTo("IPA");
+        verify(beerRepository).findByBeerNameContainingIgnoreCaseAndBeerStyleContainingIgnoreCase(
+                eq("Test"), eq("IPA"), any(Pageable.class));
     }
 }

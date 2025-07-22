@@ -30,12 +30,13 @@ public interface BeerService {
     List<BeerDto> getAllBeers();
     
     /**
-     * Get beers with optional filtering by name and pagination
+     * Get beers with optional filtering by name, style and pagination
      * @param beerName optional name filter (can be null or empty)
+     * @param beerStyle optional style filter (can be null or empty)
      * @param pageable pagination information
      * @return a page of beer DTOs matching the criteria
      */
-    Page<BeerDto> getBeers(String beerName, Pageable pageable);
+    Page<BeerDto> getBeers(String beerName, String beerStyle, Pageable pageable);
 
     /**
      * Update an existing beer

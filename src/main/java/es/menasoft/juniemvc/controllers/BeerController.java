@@ -56,7 +56,7 @@ class BeerController {
      * Retrieves all beers.
      *
      * @return a list of all beers with status 200 (OK)
-     * @deprecated Use {@link #getBeers(String, Integer, Integer, String, String)} instead
+     * @deprecated Use {@link #getBeers(String, String, Integer, Integer, String, String)} instead
      */
     @GetMapping(path = "/all")
     @Deprecated
@@ -66,9 +66,10 @@ class BeerController {
     }
     
     /**
-     * Retrieves beers with optional filtering by name and pagination.
+     * Retrieves beers with optional filtering by name, style and pagination.
      *
      * @param beerName optional name filter (can be null or empty)
+     * @param beerStyle optional style filter (can be null or empty)
      * @param page page number (0-based, defaults to 0)
      * @param size page size (defaults to 20)
      * @param sortField field to sort by (defaults to "id")
@@ -78,6 +79,7 @@ class BeerController {
     @GetMapping
     public ResponseEntity<Page<BeerDto>> getBeers(
             @RequestParam(required = false) String beerName,
+            @RequestParam(required = false) String beerStyle,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "20") Integer size,
             @RequestParam(defaultValue = "id") String sortField,
@@ -86,7 +88,7 @@ class BeerController {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
         Pageable pageable = PageRequest.of(page, size, sort);
         
-        Page<BeerDto> beers = beerService.getBeers(beerName, pageable);
+        Page<BeerDto> beers = beerService.getBeers(beerName, beerStyle, pageable);
         return new ResponseEntity<>(beers, HttpStatus.OK);
     }
 

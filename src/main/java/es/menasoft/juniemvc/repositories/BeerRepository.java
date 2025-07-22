@@ -20,6 +20,24 @@ public interface BeerRepository extends JpaRepository<Beer, Integer> {
     Page<Beer> findByBeerNameContainingIgnoreCase(String beerName, Pageable pageable);
     
     /**
+     * Find beers by style containing the given string (case-insensitive)
+     * @param beerStyle the style to search for
+     * @param pageable pagination information
+     * @return a page of beers matching the search criteria
+     */
+    Page<Beer> findByBeerStyleContainingIgnoreCase(String beerStyle, Pageable pageable);
+    
+    /**
+     * Find beers by name and style containing the given strings (case-insensitive)
+     * @param beerName the name to search for
+     * @param beerStyle the style to search for
+     * @param pageable pagination information
+     * @return a page of beers matching the search criteria
+     */
+    Page<Beer> findByBeerNameContainingIgnoreCaseAndBeerStyleContainingIgnoreCase(
+            String beerName, String beerStyle, Pageable pageable);
+    
+    /**
      * Find all beers with pagination
      * @param pageable pagination information
      * @return a page of all beers

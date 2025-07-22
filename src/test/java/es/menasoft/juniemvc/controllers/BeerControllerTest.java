@@ -195,7 +195,7 @@ public class BeerControllerTest {
         List<BeerDto> filteredList = Arrays.asList(testBeer);
         Page<BeerDto> beerPage = new PageImpl<>(filteredList, pageable, filteredList.size());
         
-        given(beerService.getBeers(eq("Test"), any(Pageable.class))).willReturn(beerPage);
+        given(beerService.getBeers(eq("Test"), eq(null), any(Pageable.class))).willReturn(beerPage);
         
         // When/Then
         mockMvc.perform(get("/api/v1/beers")
@@ -214,7 +214,7 @@ public class BeerControllerTest {
         List<BeerDto> pagedList = Arrays.asList(testBeer);
         Page<BeerDto> beerPage = new PageImpl<>(pagedList, pageable, testBeerList.size());
         
-        given(beerService.getBeers(eq(null), any(Pageable.class))).willReturn(beerPage);
+        given(beerService.getBeers(eq(null), eq(null), any(Pageable.class))).willReturn(beerPage);
         
         // When/Then
         mockMvc.perform(get("/api/v1/beers")
@@ -234,7 +234,7 @@ public class BeerControllerTest {
         Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "beerName"));
         Page<BeerDto> beerPage = new PageImpl<>(testBeerList, pageable, testBeerList.size());
         
-        given(beerService.getBeers(eq(null), any(Pageable.class))).willReturn(beerPage);
+        given(beerService.getBeers(eq(null), eq(null), any(Pageable.class))).willReturn(beerPage);
         
         // When/Then
         mockMvc.perform(get("/api/v1/beers")
@@ -244,6 +244,46 @@ public class BeerControllerTest {
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(jsonPath("$.content[0].id", is(1)))
                 .andExpect(jsonPath("$.content[1].id", is(2)));
+    }
+    
+    @Test
+    public void testGetBeersWithStyleFilter() throws Exception {
+        // Given
+        Pageable pageable = PageRequest.of(0, 20);
+        List<BeerDto> filteredList = Arrays.asList(testBeer);
+        Page<BeerDto> beerPage = new PageImpl<>(filteredList, pageable, filteredList.size());
+        
+        given(beerService.getBeers(eq(null), eq("IPA"), any(Pageable.class))).willReturn(beerPage);
+        
+        // When/Then
+        mockMvc.perform(get("/api/v1/beers")
+                .param("beerStyle", "IPA"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].id", is(1)))
+                .andExpect(jsonPath("$.content[0].beerStyle", is("IPA")))
+                .andExpect(jsonPath("$.totalElements", is(1)));
+    }
+    
+    @Test
+    public void testGetBeersWithNameAndStyleFilter() throws Exception {
+        // Given
+        Pageable pageable = PageRequest.of(0, 20);
+        List<BeerDto> filteredList = Arrays.asList(testBeer);
+        Page<BeerDto> beerPage = new PageImpl<>(filteredList, pageable, filteredList.size());
+        
+        given(beerService.getBeers(eq("Test"), eq("IPA"), any(Pageable.class))).willReturn(beerPage);
+        
+        // When/Then
+        mockMvc.perform(get("/api/v1/beers")
+                .param("beerName", "Test")
+                .param("beerStyle", "IPA"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].id", is(1)))
+                .andExpect(jsonPath("$.content[0].beerName", is("Test Beer")))
+                .andExpect(jsonPath("$.content[0].beerStyle", is("IPA")))
+                .andExpect(jsonPath("$.totalElements", is(1)));
     }
 
     @Test
