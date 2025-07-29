@@ -19,6 +19,9 @@ public record BeerDto(
         @NotBlank(message = "Beer style is required")
         String beerStyle,
 
+        // description of the beer, its flavor profile, characteristics, etc.
+        String description,
+
         // Universal Product Code, a 13-digit number assigned to each unique beer product by the Federal Bar Assocation
         @NotBlank(message = "UPC is required")
         String upc,

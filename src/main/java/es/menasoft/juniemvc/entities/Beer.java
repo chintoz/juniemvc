@@ -27,6 +27,7 @@ public class Beer {
 
     private String beerName;
     private String beerStyle;
+    private String description;
     private String upc;
     private Integer quantityOnHand;
     private BigDecimal price;

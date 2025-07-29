@@ -28,6 +28,10 @@ properties:
     type: string
     minLength: 1
     example: "PILSNER"
+  description:
+    description: "Description of the beer, its flavor profile, characteristics, etc."
+    type: string
+    example: "A crisp, refreshing pilsner with a clean finish and subtle hop aroma."
   upc:
     description: "Universal Product Code, a 13-digit number assigned to each unique beer product by the Federal Bar Association."
     type: string

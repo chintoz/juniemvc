@@ -79,6 +79,7 @@ public class BeerServiceImpl implements BeerService {
                     Beer beerToUpdate = beerMapper.beerDtoToBeer(beerDto);
                     existingBeer.setBeerName(beerToUpdate.getBeerName());
                     existingBeer.setBeerStyle(beerToUpdate.getBeerStyle());
+                    existingBeer.setDescription(beerToUpdate.getDescription());
                     existingBeer.setUpc(beerToUpdate.getUpc());
                     existingBeer.setPrice(beerToUpdate.getPrice());
                     existingBeer.setQuantityOnHand(beerToUpdate.getQuantityOnHand());
