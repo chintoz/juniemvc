@@ -124,6 +124,55 @@ put:
                 type: string
                 example: "Beer with ID 1 not found"
 
+patch:
+  tags:
+    - Beer
+  summary: Partially update beer
+  description: "Partially updates a beer with the provided data. Only the fields that are provided will be updated."
+  operationId: patchBeer
+  security:
+    - api_key: []
+  requestBody:
+    description: "Partial beer data for update"
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/BeerPatch.yaml'
+        example:
+          beerName: "Pilsner Urquell Premium"
+          price: 13.99
+  responses:
+    '200':
+      description: "Successfully updated the beer"
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/Beer.yaml'
+          example:
+            id: 1
+            version: 2
+            beerName: "Pilsner Urquell Premium"
+            beerStyle: "PILSNER"
+            upc: "0631234200036"
+            quantityOnHand: 100
+            price: 13.99
+            createdDate: "2025-07-19T00:34:00Z"
+            updateDate: "2025-07-19T00:35:00Z"
+    '404':
+      description: "Beer not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "Beer with ID 1 not found"
+
 delete:
   tags:
     - Beer

@@ -3,6 +3,7 @@ package es.menasoft.juniemvc.services;
 import es.menasoft.juniemvc.entities.Beer;
 import es.menasoft.juniemvc.mappers.BeerMapper;
 import es.menasoft.juniemvc.models.BeerDto;
+import es.menasoft.juniemvc.models.BeerPatchDto;
 import es.menasoft.juniemvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -97,5 +98,17 @@ public class BeerServiceImpl implements BeerService {
                     return true;
                 })
                 .orElse(false);
+    }
+    
+    @Override
+    @Transactional
+    public Optional<BeerDto> patchBeer(Integer id, BeerPatchDto patchDto) {
+        return beerRepository.findById(id)
+                .map(existingBeer -> {
+                    // Apply patch using the mapper that ignores null values
+                    beerMapper.updateBeerFromPatchDto(patchDto, existingBeer);
+                    Beer savedBeer = beerRepository.save(existingBeer);
+                    return beerMapper.beerToBeerDto(savedBeer);
+                });
     }
 }

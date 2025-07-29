@@ -2,6 +2,7 @@ package es.menasoft.juniemvc.controllers;
 
 import es.menasoft.juniemvc.exceptions.EntityNotFoundException;
 import es.menasoft.juniemvc.models.BeerDto;
+import es.menasoft.juniemvc.models.BeerPatchDto;
 import es.menasoft.juniemvc.services.BeerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -120,5 +121,21 @@ class BeerController {
             throw new EntityNotFoundException("Beer", beerId);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    
+    /**
+     * Partially updates a beer.
+     * Only the non-null fields in the request body will be updated.
+     *
+     * @param beerId the ID of the beer to update
+     * @param patchDto the partial update data (only non-null fields will be updated)
+     * @return the updated beer with status 200 (OK)
+     * @throws EntityNotFoundException if the beer is not found
+     */
+    @PatchMapping("/{beerId}")
+    public ResponseEntity<BeerDto> patchBeer(@PathVariable("beerId") Integer beerId, @RequestBody BeerPatchDto patchDto) {
+        BeerDto updatedBeer = beerService.patchBeer(beerId, patchDto)
+                .orElseThrow(() -> new EntityNotFoundException("Beer", beerId));
+        return new ResponseEntity<>(updatedBeer, HttpStatus.OK);
     }
 }

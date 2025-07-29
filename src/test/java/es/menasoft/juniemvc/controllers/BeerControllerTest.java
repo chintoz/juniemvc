@@ -2,6 +2,7 @@ package es.menasoft.juniemvc.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.menasoft.juniemvc.models.BeerDto;
+import es.menasoft.juniemvc.models.BeerPatchDto;
 import es.menasoft.juniemvc.services.BeerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -376,6 +377,70 @@ public class BeerControllerTest {
 
         // When/Then
         mockMvc.perform(delete("/api/v1/beers/999"))
+                .andExpect(status().isNotFound());
+    }
+    
+    @Test
+    public void testPatchBeer() throws Exception {
+        // Given
+        BeerPatchDto beerPatch = new BeerPatchDto(
+                "Patched Beer",
+                null,  // beerStyle not changed
+                "Updated description via patch",
+                null,  // upc not changed
+                null,  // quantityOnHand not changed
+                new BigDecimal("14.99")  // price changed
+        );
+
+        BeerDto patchedBeer = new BeerDto(
+                1,
+                null,
+                "Patched Beer",
+                "IPA",  // original style preserved
+                "Updated description via patch",
+                "123456",  // original upc preserved
+                100,  // original quantity preserved
+                new BigDecimal("14.99"),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(beerService.patchBeer(eq(1), any(BeerPatchDto.class))).willReturn(Optional.of(patchedBeer));
+
+        // When/Then
+        mockMvc.perform(patch("/api/v1/beers/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(beerPatch)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.beerName", is("Patched Beer")))
+                .andExpect(jsonPath("$.beerStyle", is("IPA")))  // unchanged
+                .andExpect(jsonPath("$.description", is("Updated description via patch")))
+                .andExpect(jsonPath("$.upc", is("123456")))  // unchanged
+                .andExpect(jsonPath("$.quantityOnHand", is(100)))  // unchanged
+                .andExpect(jsonPath("$.price", is(14.99)));  // changed
+                
+        verify(beerService).patchBeer(eq(1), any(BeerPatchDto.class));
+    }
+    
+    @Test
+    public void testPatchBeerNotFound() throws Exception {
+        // Given
+        BeerPatchDto beerPatch = new BeerPatchDto(
+                "Patched Beer",
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        given(beerService.patchBeer(eq(999), any(BeerPatchDto.class))).willReturn(Optional.empty());
+
+        // When/Then
+        mockMvc.perform(patch("/api/v1/beers/999")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(beerPatch)))
                 .andExpect(status().isNotFound());
     }
 }

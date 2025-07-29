@@ -3,6 +3,7 @@ package es.menasoft.juniemvc.services;
 import es.menasoft.juniemvc.entities.Beer;
 import es.menasoft.juniemvc.mappers.BeerMapper;
 import es.menasoft.juniemvc.models.BeerDto;
+import es.menasoft.juniemvc.models.BeerPatchDto;
 import es.menasoft.juniemvc.repositories.BeerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -455,5 +456,55 @@ class BeerServiceImplTest {
         assertThat(result.getContent().get(0).beerStyle()).isEqualTo("IPA");
         verify(beerRepository).findByBeerNameContainingIgnoreCaseAndBeerStyleContainingIgnoreCase(
                 eq("Test"), eq("IPA"), any(Pageable.class));
+    }
+    
+    @Test
+    void patchBeerSuccess() {
+        // Given
+        Integer beerId = 1;
+        BeerPatchDto patchDto = new BeerPatchDto(
+            "Updated Name",
+            null,  // beerStyle not changed
+            "Updated description",
+            null,  // upc not changed
+            50,    // quantityOnHand changed
+            null   // price not changed
+        );
+        
+        when(beerRepository.findById(beerId)).thenReturn(Optional.of(testBeer));
+        when(beerRepository.save(any(Beer.class))).thenReturn(testBeer);
+        when(beerMapper.beerToBeerDto(any(Beer.class))).thenReturn(testBeerDto);
+        
+        // When
+        Optional<BeerDto> result = beerService.patchBeer(beerId, patchDto);
+        
+        // Then
+        assertThat(result).isPresent();
+        verify(beerRepository).findById(beerId);
+        verify(beerMapper).updateBeerFromPatchDto(eq(patchDto), any(Beer.class));
+        verify(beerRepository).save(any(Beer.class));
+    }
+    
+    @Test
+    void patchBeerNotFound() {
+        // Given
+        Integer beerId = 999;
+        BeerPatchDto patchDto = new BeerPatchDto(
+            "Updated Name",
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+        
+        when(beerRepository.findById(beerId)).thenReturn(Optional.empty());
+        
+        // When
+        Optional<BeerDto> result = beerService.patchBeer(beerId, patchDto);
+        
+        // Then
+        assertThat(result).isEmpty();
+        verify(beerRepository).findById(beerId);
     }
 }

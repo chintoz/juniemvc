@@ -1,6 +1,7 @@
 package es.menasoft.juniemvc.services;
 
 import es.menasoft.juniemvc.models.BeerDto;
+import es.menasoft.juniemvc.models.BeerPatchDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -45,6 +46,14 @@ public interface BeerService {
      * @return an Optional containing the updated beer DTO if found, or empty if not found
      */
     Optional<BeerDto> updateBeer(Integer id, BeerDto beerDto);
+    
+    /**
+     * Partially update an existing beer
+     * @param id the ID of the beer to update
+     * @param patchDto the partial update data (only non-null fields will be updated)
+     * @return an Optional containing the updated beer DTO if found, or empty if not found
+     */
+    Optional<BeerDto> patchBeer(Integer id, BeerPatchDto patchDto);
 
     /**
      * Delete a beer by its ID
