@@ -1,0 +1,170 @@
+parameters:
+  - name: orderId
+    in: path
+    description: "The ID of the beer order"
+    required: true
+    schema:
+      type: integer
+      format: int32
+    example: 1
+
+get:
+  tags:
+    - Beer Order
+  summary: Get beer order by ID
+  description: "Retrieves a beer order by its ID."
+  operationId: getBeerOrderById
+  security:
+    - api_key: []
+  responses:
+    '200':
+      description: "Successfully retrieved the beer order"
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/BeerOrderDto.yaml'
+          example:
+            id: 1
+            version: 1
+            orderStatus: "NEW"
+            createdDate: "2025-07-19T00:52:00Z"
+            updateDate: "2025-07-19T00:52:00Z"
+            customerId: 1
+            orderLines:
+              - id: 1
+                orderQuantity: 5
+                beerId: 1
+                beerName: "Pilsner Urquell"
+              - id: 2
+                orderQuantity: 3
+                beerId: 2
+                beerName: "Guinness Draught"
+    '404':
+      description: "Beer order not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "BeerOrder with ID 1 not found"
+
+put:
+  tags:
+    - Beer Order
+  summary: Update beer order
+  description: "Updates a beer order with the provided data."
+  operationId: updateBeerOrder
+  security:
+    - api_key: []
+  requestBody:
+    description: "Updated beer order data"
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/BeerOrderDto.yaml'
+        example:
+          id: 1
+          version: 1
+          orderStatus: "PROCESSING"
+          customerId: 1
+          orderLines:
+            - id: 1
+              orderQuantity: 10
+              beerId: 1
+              beerName: "Pilsner Urquell"
+            - id: 2
+              orderQuantity: 5
+              beerId: 2
+              beerName: "Guinness Draught"
+  responses:
+    '200':
+      description: "Successfully updated the beer order"
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/BeerOrderDto.yaml'
+          example:
+            id: 1
+            version: 2
+            orderStatus: "PROCESSING"
+            createdDate: "2025-07-19T00:52:00Z"
+            updateDate: "2025-07-19T00:53:00Z"
+            customerId: 1
+            orderLines:
+              - id: 1
+                orderQuantity: 10
+                beerId: 1
+                beerName: "Pilsner Urquell"
+              - id: 2
+                orderQuantity: 5
+                beerId: 2
+                beerName: "Guinness Draught"
+    '400':
+      description: "Invalid beer order data provided"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Validation failed"
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string
+                example:
+                  - field: "orderLines"
+                    message: "Order must have at least one order line"
+    '404':
+      description: "Beer order not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "BeerOrder with ID 1 not found"
+
+delete:
+  tags:
+    - Beer Order
+  summary: Delete beer order
+  description: "Deletes a beer order by its ID."
+  operationId: deleteBeerOrder
+  security:
+    - api_key: []
+  responses:
+    '204':
+      description: "Successfully deleted the beer order"
+    '404':
+      description: "Beer order not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "BeerOrder with ID 1 not found"

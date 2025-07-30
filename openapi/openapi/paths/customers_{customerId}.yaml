@@ -1,0 +1,159 @@
+parameters:
+  - name: customerId
+    in: path
+    description: "The ID of the customer"
+    required: true
+    schema:
+      type: integer
+      format: int32
+    example: 1
+
+get:
+  tags:
+    - Customer
+  summary: Get customer by ID
+  description: "Retrieves a customer by its ID."
+  operationId: getCustomerById
+  security:
+    - api_key: []
+  responses:
+    '200':
+      description: "Successfully retrieved the customer"
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/CustomerDto.yaml'
+          example:
+            id: 1
+            version: 1
+            name: "John Doe"
+            email: "john.doe@example.com"
+            phone: "555-123-4567"
+            addressLine1: "123 Main St"
+            addressLine2: "Apt 4B"
+            city: "Anytown"
+            state: "CA"
+            postalCode: "12345"
+            createdDate: "2025-07-19T00:34:00Z"
+            updateDate: "2025-07-19T00:34:00Z"
+    '404':
+      description: "Customer not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "Customer with ID 1 not found"
+
+put:
+  tags:
+    - Customer
+  summary: Update customer
+  description: "Updates a customer with the provided data."
+  operationId: updateCustomer
+  security:
+    - api_key: []
+  requestBody:
+    description: "Updated customer data"
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/CustomerDto.yaml'
+        example:
+          name: "John Doe Updated"
+          email: "john.updated@example.com"
+          phone: "555-123-9999"
+          addressLine1: "123 Updated St"
+          addressLine2: "Apt 5C"
+          city: "Newtown"
+          state: "CA"
+          postalCode: "12345"
+  responses:
+    '200':
+      description: "Successfully updated the customer"
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/CustomerDto.yaml'
+          example:
+            id: 1
+            version: 2
+            name: "John Doe Updated"
+            email: "john.updated@example.com"
+            phone: "555-123-9999"
+            addressLine1: "123 Updated St"
+            addressLine2: "Apt 5C"
+            city: "Newtown"
+            state: "CA"
+            postalCode: "12345"
+            createdDate: "2025-07-19T00:34:00Z"
+            updateDate: "2025-07-19T00:35:00Z"
+    '400':
+      description: "Invalid customer data provided"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Validation failed"
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    message:
+                      type: string
+                example:
+                  - field: "email"
+                    message: "Email must be valid"
+    '404':
+      description: "Customer not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "Customer with ID 1 not found"
+
+delete:
+  tags:
+    - Customer
+  summary: Delete customer
+  description: "Deletes a customer by its ID."
+  operationId: deleteCustomer
+  security:
+    - api_key: []
+  responses:
+    '204':
+      description: "Successfully deleted the customer"
+    '404':
+      description: "Customer not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "Customer with ID 1 not found"

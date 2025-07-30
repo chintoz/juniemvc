@@ -1,0 +1,21 @@
+type: object
+required:
+  - customerId
+  - orderLines
+properties:
+  customerId:
+    description: "Identifier of the customer who is placing the order."
+    type: integer
+    format: int32
+    example: 1
+  orderLines:
+    description: "List of order lines in the beer order."
+    type: array
+    minItems: 1
+    items:
+      $ref: './OrderLineDto.yaml'
+    example:
+      - orderQuantity: 5
+        beerId: 1
+      - orderQuantity: 3
+        beerId: 2

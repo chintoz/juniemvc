@@ -1,0 +1,76 @@
+get:
+  tags:
+    - shipments
+  summary: Get all beer order shipments
+  description: Returns a list of all beer order shipments
+  operationId: getAllShipments
+  responses:
+    '200':
+      description: A list of beer order shipments
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../components/schemas/BeerOrderShipmentDto.yaml'
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Internal server error"
+
+post:
+  tags:
+    - shipments
+  summary: Create a new beer order shipment
+  description: Creates a new beer order shipment and returns the created shipment
+  operationId: createShipment
+  requestBody:
+    description: Beer order shipment to create
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/CreateBeerOrderShipmentCommand.yaml'
+  responses:
+    '201':
+      description: Beer order shipment created
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/BeerOrderShipmentDto.yaml'
+    '400':
+      description: Invalid input
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Invalid input"
+    '404':
+      description: Beer order not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Beer order not found"
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Internal server error"

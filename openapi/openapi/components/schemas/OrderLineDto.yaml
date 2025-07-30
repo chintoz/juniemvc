@@ -1,0 +1,26 @@
+type: object
+required:
+  - orderQuantity
+  - beerId
+properties:
+  id:
+    description: "Unique identifier for the order line. Read-only field."
+    type: integer
+    format: int32
+    readOnly: true
+    example: 1
+  orderQuantity:
+    description: "Quantity of beer ordered."
+    type: integer
+    format: int32
+    minimum: 1
+    example: 5
+  beerId:
+    description: "Reference to an existing Beer in the catalog."
+    type: integer
+    format: int32
+    example: 1
+  beerName:
+    description: "Name of the beer."
+    type: string
+    example: "Pilsner Urquell"

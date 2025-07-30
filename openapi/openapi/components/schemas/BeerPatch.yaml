@@ -1,0 +1,29 @@
+type: object
+description: Schema for partially updating a beer
+properties:
+  beerName:
+    type: string
+    description: Name of the beer
+    example: "Pilsner Urquell"
+  beerStyle:
+    type: string
+    description: Style of the beer (ALE, PALE_ALE, IPA, etc.)
+    example: "PILSNER"
+  description:
+    type: string
+    description: Description of the beer
+    example: "The original pilsner from Plzeň"
+  upc:
+    type: string
+    description: Universal Product Code
+    example: "0631234200036"
+  quantityOnHand:
+    type: integer
+    format: int32
+    description: Quantity available in stock
+    example: 100
+  price:
+    type: number
+    format: float
+    description: Price of the beer
+    example: 12.99
