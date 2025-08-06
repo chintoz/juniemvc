@@ -100,3 +100,8 @@ Write the improved guide to `prompts/plan.md`.
 --------------------
 
 Create a detailed enumerated task list according to the suggested enhancements plan in `prompts/plan.md`. Task items should have a placeholder [ ] for marking as done [x] upon task completion. Write the task list to `prompts/tasks.md` file.
+
+--------------------
+
+Complete the task list in `prompts/tasks.md`. Use information from `prompts/requirements.md` and `prompts/plan.md` for additional context when completing the tasks.
+Implement the tasks in the task list. Focus on completing the tasks in the order they are listed. Mark the task complete as it is done by replacing the placeholder [ ] with [x]. As each step is completed, it is crucial to update the task list mark and the task as done [x].
