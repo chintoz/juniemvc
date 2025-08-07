@@ -14,14 +14,14 @@ CREATE TABLE beer_order_shipment (
     beer_order_id INT,
     
     -- Foreign key constraint to beer_order table
-    CONSTRAINT fk_beer_order_shipment_beer_order FOREIGN KEY (beer_order_id) REFERENCES beer_order(id),
-    
-    -- Add indexes for frequently queried columns
-    INDEX idx_beer_order_shipment_date (shipment_date),
-    INDEX idx_beer_order_shipment_carrier (carrier),
-    INDEX idx_beer_order_shipment_tracking_number (tracking_number),
-    INDEX idx_beer_order_shipment_beer_order (beer_order_id)
+    CONSTRAINT fk_beer_order_shipment_beer_order FOREIGN KEY (beer_order_id) REFERENCES beer_order(id)
 );
+
+-- Add indexes for frequently queried columns
+CREATE INDEX idx_beer_order_shipment_date ON beer_order_shipment(shipment_date);
+CREATE INDEX idx_beer_order_shipment_carrier ON beer_order_shipment(carrier);
+CREATE INDEX idx_beer_order_shipment_tracking_number ON beer_order_shipment(tracking_number);
+CREATE INDEX idx_beer_order_shipment_beer_order ON beer_order_shipment(beer_order_id);
 
 -- Add comments to explain the purpose of this migration script
 -- This script adds the beer_order_shipment table to the database
